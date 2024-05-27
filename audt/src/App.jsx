@@ -115,7 +115,7 @@ function App() {
         let temp_img_dict = {};
         gallery.forEach((name) => {
             if (import.meta.env.PROD) {
-                let endIndex = name.lastIndexOf(".") - 8;
+                let endIndex = name.lastIndexOf(".") - 9;
                 let startIndex = name.substring(0, endIndex).lastIndexOf("_") + 1;
                 temp_img_dict[name.substring(startIndex, endIndex)] = name;
             }
