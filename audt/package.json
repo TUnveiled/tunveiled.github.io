@@ -1,6 +1,6 @@
 {
   "name": "audt",
-  "private": true,
+  "private": false,
   "homepage": "https://tunveiled.github.io/",
   "version": "0.1.0",
   "type": "module",
