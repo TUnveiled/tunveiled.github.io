@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import React from 'react';
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
@@ -13,6 +13,8 @@ import Stack from 'react-bootstrap/Stack';
 import Table from 'react-bootstrap/Table';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
+import defaultCSV from '/AU_Card_Images/Card_Data.csv?url';
+import spacer from '/spacer.png?url';
 
 function App() {
     const [csv_data, setCsvData] = useState([[]]);
@@ -20,6 +22,9 @@ function App() {
     const [headers, setHeaders] = useState([]);
     const [img_dict, setImgDict] = useState({});
     const [decklist, setDecklist] = useState([]);
+    const gallery = Object.values(import.meta.glob('/AU_Card_Images/*/*.png', { eager: true, query: '?url', import: 'default' }));
+
+  
     function updateCount(id, count) {
         let temp_csv_data = csv_data.map((row, index) => row.map((value, index2) => (row[0] == id && index2 == 1) ? count : value));
         setCsvData(temp_csv_data);
@@ -27,7 +32,7 @@ function App() {
 
         updateDecklist(temp_csv_data);
     }
-
+    
     function downloadCSV() {
         let csvContent = "data:text/csv;charset=utf-8,"
             + headers.join(",") + "\n" 
@@ -50,10 +55,10 @@ function App() {
                 ctx.drawImage(img, 750 * (index % 10), 1050 * (Math.floor(index / 10)));
                 countdown--;
             });
-            img.src = img_dict[decklist[index]] ?? "spacer.png"; 
+            img.src = img_dict[decklist[index]] ?? spacer; 
         });
 
-        function checkComplete() {
+        let checkComplete = function () {
             if (countdown == 0) {
                 var dataURL = canvas.toDataURL("image/png");
                 var aDownloadLink = document.createElement('a');
@@ -61,7 +66,7 @@ function App() {
                 aDownloadLink.href = dataURL;
                 aDownloadLink.click();
             } else {
-                setTimeout(checkComplete, 100);
+                setTimeout(checkComplete, 50);
             }
         }
 
@@ -85,17 +90,6 @@ function App() {
             return (type_list == undefined || type_list.includes(row[3]) || type_list.length == 0) && (faction_list == undefined || faction_list.includes(row[4]) || faction_list.length == 0)
         }));
     }
-
-    const gallery = Object.values(import.meta.glob('/AU_Card_Images/*/*.{png,jpg,jpeg,PNG,JPEG}', { eager: true, as: 'url' }))
-
-    if (img_dict["0"] == null) {
-        let temp_img_dict = {};
-        gallery.forEach((name) => {
-            temp_img_dict[name.substring(name.lastIndexOf("_") + 1, name.lastIndexOf("."))] = name;
-        })
-        setImgDict(temp_img_dict);
-    }
-
     function load_csv(data) {
         var allTextLines = data.split(/\r\n|\n/);
         var _headers = allTextLines[0].split(',');
@@ -116,20 +110,44 @@ function App() {
         updateDecklist(lines);
     }
 
-    if (csv_data.length < 2)
+    // first run only
+    useEffect(() => {
+        let temp_img_dict = {};
+        gallery.forEach((name) => {
+            if (import.meta.env.PROD) {
+                let endIndex = name.lastIndexOf(".") - 8;
+                let startIndex = name.substring(0, endIndex).lastIndexOf("_") + 1;
+                temp_img_dict[name.substring(startIndex, endIndex)] = name;
+            }
+            else {
+                temp_img_dict[name.substring(name.lastIndexOf("_") + 1, name.lastIndexOf("."))] = name;
+            }
+        })
+        setImgDict(temp_img_dict);
+
         $.ajax({
             type: "GET",
-            url: "AU_Card_Images/Card_Data.csv",
+            url: defaultCSV,
             dataType: "text",
             success: load_csv
         });
+    }, []);
 
     return (
         <>
             <h1>AU Deckbuilder</h1>
+            <hr class="hr" />
             <Container fluid>
-                <Row>
-                    <Col>
+                <Row fluid>
+                    <Col lg={5}>
+                        <h2>Instructions</h2>
+                        <ul>
+                            <li>Import a CSV or scroll down to the <a href="#table">Table</a> to get started!</li>
+                            <li>Use the filters to help find the cards you want to add in the table. Use ctrl-click to select multiple.</li>
+                            <li>Give your deck a name and save it as a CSV to edit it later or as a TTS face image to import it right into Tabletop Simulator!</li>
+                        </ul>
+                        
+                        <hr class="hr"/>
                         <h2>Import CSV</h2>
                         <Form.Control size="lg" name="file" type="file" onChange={function (e) {
                             let _file = e.target.files[0];
@@ -140,6 +158,7 @@ function App() {
                             reader.readAsText(_file);
                         }
                         } />
+                        <hr class="hr" />
                         <h2>Filters</h2>
                         <Form>
                             <h3>Faction</h3>
@@ -152,6 +171,7 @@ function App() {
                                 <option value="Myst">Myst</option>
                                 <option value="Rula">Rula</option>
                             </Form.Select>
+                            <br />
                             <h3>Type</h3>
                             <Form.Select id="type_list" multiple htmlSize={4} onClick={updateFilters}>
                                 <option value="Unit">Unit</option>
@@ -160,21 +180,23 @@ function App() {
                                 <option value="Commander">Commander</option>
                             </Form.Select>
                         </Form>
+                        <hr class="hr" />
                         <h2>Downloads</h2>
                         <Stack direction="horizontal" gap={0}>
                             <Form.Control placeholder="File Name" style={{maxWidth: "60%"}} id="filename" size="lg" type="text"></Form.Control>
                             <div className="p-2"><Button onClick={ downloadCSV }>Download as CSV</Button></div>
-                            <div className="p-2"><Button onClick={downloadImage }>Download as Image</Button></div>
+                            <div className="p-2"><Button onClick={downloadImage }>Download as TTS Face Image</Button></div>
                         </Stack>
+                      
                     </Col>
-                    <Col>
+                    <Col lg={7}>
                         <h2>Preview</h2>
                         <Table size="sm">
                             <tbody>
                                 {Array.from(Array(6).keys()).map((_, row) => (
                                     <tr>
                                         {Array.from(Array(10).keys()).map((_, col) => (
-                                            <td><Image style={{ maxWidth: "100%" }} src={img_dict[decklist[row * 10 + col]] ?? "spacer.png"}></Image></td>
+                                            <td><Image style={{ maxWidth: "100%" }} src={img_dict[decklist[row * 10 + col]] ?? spacer}></Image></td>
                                         ))}
                                     </tr>
                                 ))}
@@ -184,8 +206,9 @@ function App() {
                     </Col>
                 </Row>
             </Container>
-            
-            <h2>Table</h2>
+
+            <hr class="hr" />
+            <h2 id="table">Table</h2>
             <Table responsive>
                 <thead>
                     <tr>
@@ -206,24 +229,6 @@ function App() {
                     ))}
                 </tbody>
             </Table>
-            
-            <div>
-                <a href="https://vitejs.dev" target="_blank">
-                    <img src={viteLogo} className="logo" alt="Vite logo" />
-                </a>
-                <a href="https://react.dev" target="_blank">
-                    <img src={reactLogo} className="logo react" alt="React logo" />
-                </a>
-            </div>
-            <h1>Vite + React</h1>
-            <div className="card">
-                <p>
-                    
-                </p>
-            </div>
-            <p className="read-the-docs">
-                Click on the Vite and React logos to learn more
-            </p>
             
         </>
     )
