@@ -7,6 +7,9 @@
     <ShouldRunBuildScript>false</ShouldRunBuildScript>
     <!-- Folder where production build objects will be placed -->
     <BuildOutputFolder>$(MSBuildProjectDirectory)\dist</BuildOutputFolder>
+    <StartupCommandWorkingDirectory>C:\Users\18076\source\repos\tunveiled.github.io\audt</StartupCommandWorkingDirectory>
+    <BuildCommand>
+    </BuildCommand>
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="build\" />

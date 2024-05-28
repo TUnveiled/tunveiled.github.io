@@ -14,6 +14,8 @@ import Tooltip from 'react-bootstrap/Tooltip';
 import Button from 'react-bootstrap/Button';
 import defaultCSV from '/AU_Card_Images/Card_Data.csv?url';
 import spacer from '/spacer.png?url';
+import mana from '/mana.png?url';
+import gold from '/gold.png?url'
 import reactStringReplace from 'react-string-replace';
 
 function App() {
@@ -34,7 +36,7 @@ function App() {
     }
     function downloadCSV() { // Convert decklist into CSV format and download
         let csvContent = "data:text/csv;charset=utf-8,"
-            + headers.join(",") + "\n" 
+            + headers.join(",") + "\n"
             + csv_data.map(e => e.slice(1).join(",")).join("\n");
         var encodedUri = encodeURI(csvContent);
         var aDownloadLink = document.createElement('a');
@@ -55,7 +57,7 @@ function App() {
                 ctx.drawImage(img, 750 * (index % 10), 1050 * (Math.floor(index / 10)));
                 countdown--;
             });
-            img.src = img_dict[decklist[index]] ?? spacer; 
+            img.src = img_dict[decklist[index]] ?? spacer;
         });
 
         // Wait for each image to be drawn, then download the canvas as a PNG
@@ -72,7 +74,7 @@ function App() {
         }
 
         checkComplete();
-        
+
     }
     function updateDecklist(data) { // Create the decklist array
         let temp_decklist = [];
@@ -118,11 +120,11 @@ function App() {
             return "";
         switch (index) {
             case 1:
-                return (<input style={{ "maxWidth": "50px" }} type="number" value={value} onChange={(e) => { updateCount(row_value[0], e.target.value) }} />);
+                return (<input style={{ "maxWidth": "50px" }} type="number" value={value} onChange={(e) => { updateCount(row[0], e.target.value) }} />);
                 break;
             case 2:
                 return (
-                    <OverlayTrigger placement="right" overlay={<Tooltip><Image style={{ maxWidth: "100%" }} src={img_dict[row[0]]}/></Tooltip>}>
+                    <OverlayTrigger placement="right" overlay={<Tooltip><Image style={{ maxWidth: "100%" }} src={img_dict[row[0]]} /></Tooltip>}>
                         <a href={img_dict[row[0]]} target="_blank">{value}</a>
                     </OverlayTrigger>
                 )
@@ -131,14 +133,14 @@ function App() {
                 if (value.charAt(0) === '"')
                     value = value.substring(1, value.length - 1);
                 value = value.replace(/<br\s*[\/]?>/gi, " _ ");
-                value = reactStringReplace(value, '<<!mana>>', (match, i) => (<Image style={{ "maxHeight": "20px" }} src="mana.png"/>));
-                value = reactStringReplace(value, '<<!gold>>', (match, i) => (<Image style={{ "maxHeight": "20px" }} src="gold.png"/>));
+                value = reactStringReplace(value, '<<!mana>>', (match, i) => (<Image style={{ "maxHeight": "20px" }} src={ mana } />));
+                value = reactStringReplace(value, '<<!gold>>', (match, i) => (<Image style={{ "maxHeight": "20px" }} src={ gold } />));
                 return value;
                 break;
             default:
                 return value;
         }
-        
+
     }
 
     // Perform First Time Setup
@@ -181,7 +183,7 @@ function App() {
                             <li>Import a CSV or scroll down to the <a href="#table">Table</a> to get started!</li>
                             <li>Use the filters to help find the cards you want to add in the table. Use ctrl-click to select multiple.</li>
                             <li>Give your deck a name and save it as a CSV to edit it later or as a PNG to import it right into Tabletop Simulator!</li>
-                            <li>Import into TTS using Objects->Components->Cards->Custom Deck with Width 10, Height 6, and Back is Hidden.  Remember to select the correct Number (of cards) as well.</li>
+                            <li>Import into TTS using Objects - Components - Cards - Custom Deck with Width 10, Height 6, and Back is Hidden.  Remember to select the correct Number (of cards) as well.</li>
                         </ul>
                         <hr className="hr" />
                         <h2>Helpful Links</h2>
@@ -192,7 +194,7 @@ function App() {
                         </ul>
                         <hr className="hr" />
                         <h2>Import CSV</h2>
-                        <Form.Control size="lg" name="file" type="file" 
+                        <Form.Control size="lg" name="file" type="file"
                             onChange={function (e) {
                                 let _file = e.target.files[0];
                                 let _form = e.target;
