@@ -1,8 +1,5 @@
 import { useState, useEffect } from 'react'
 import React from 'react';
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-//import './App.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import $, { each } from 'jquery';
 import Container from 'react-bootstrap/Container';
@@ -24,16 +21,15 @@ function App() {
     const [decklist, setDecklist] = useState([]);
     const gallery = Object.values(import.meta.glob('/AU_Card_Images/*/*.png', { eager: true, query: '?url', import: 'default' }));
 
-  
-    function updateCount(id, count) {
+
+    // Controller Functions
+    function updateCount(id, count) { // change the count associated with a specific card ID
         let temp_csv_data = csv_data.map((row, index) => row.map((value, index2) => (row[0] == id && index2 == 1) ? count : value));
         setCsvData(temp_csv_data);
         setFilteredCsvData(filtered_csv_data.map((row, index) => row.map((value, index2) => (row[0] == id && index2 == 1) ? count : value)));
-
         updateDecklist(temp_csv_data);
     }
-    
-    function downloadCSV() {
+    function downloadCSV() { // Convert decklist into CSV format and download
         let csvContent = "data:text/csv;charset=utf-8,"
             + headers.join(",") + "\n" 
             + csv_data.map(e => e.slice(1).join(",")).join("\n");
@@ -43,12 +39,13 @@ function App() {
         aDownloadLink.href = encodedUri;
         aDownloadLink.click();
     }
-
-    function downloadImage() {
+    function downloadImage() { // Draw TTS Custom Deck Image
+        // Set up the canvas fr drawing
         const canvas = document.getElementById("final_output");
         const ctx = canvas.getContext("2d");
         let countdown = decklist.length;
 
+        // Draw each image onto the canvas
         decklist.forEach((key, index) => {
             const img = document.createElement('img');
             img.addEventListener("load", () => {
@@ -58,6 +55,7 @@ function App() {
             img.src = img_dict[decklist[index]] ?? spacer; 
         });
 
+        // Wait for each image to be drawn, then download the canvas as a PNG
         let checkComplete = function () {
             if (countdown == 0) {
                 var dataURL = canvas.toDataURL("image/png");
@@ -73,8 +71,7 @@ function App() {
         checkComplete();
         
     }
-
-    function updateDecklist(data) {
+    function updateDecklist(data) { // Create the decklist array
         let temp_decklist = [];
         data.forEach((row) => {
             for (let i = 0; i < row[1]; i++) {
@@ -83,38 +80,44 @@ function App() {
         })
         setDecklist(temp_decklist);
     }
-    function updateFilters() {
+    function updateFilters(_data) { // Filter the list
         let faction_list = $('#faction_list').val();
         let type_list = $('#type_list').val();
-        setFilteredCsvData(csv_data.filter((row) => {
+        if (_data === null) _data = csv_data;
+        setFilteredCsvData(_data.filter((row) => {
             return (type_list == undefined || type_list.includes(row[3]) || type_list.length == 0) && (faction_list == undefined || faction_list.includes(row[4]) || faction_list.length == 0)
         }));
     }
-    function load_csv(data) {
+    function load_csv(data) { // convert CSV input into array
+        // Grab headers and rows
         var allTextLines = data.split(/\r\n|\n/);
-        var _headers = allTextLines[0].split(',');
+        var _headers = allTextLines[0].replace(/\s/g, String.fromCharCode(160)).split(',');
         setHeaders(_headers);
         var lines = [];
 
+        // Create each row array
         for (var i = 1; i < allTextLines.length; i++) {
             var data = allTextLines[i].match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
             var tarr = [];
             tarr.push(i - 1)
             for (var j = 0; j < _headers.length; j++) {
-                tarr.push(data[j]); //headers[j] + ":" + 
+                if (j == 1) data[j] = data[j].replace(/\s/g, String.fromCharCode(160));
+                tarr.push(data[j]);
             }
             lines.push(tarr);
         }
         setCsvData(lines);
-        setFilteredCsvData(lines);
+        updateFilters(lines);
         updateDecklist(lines);
     }
 
-    // first run only
+    // Perform First Time Setup
     useEffect(() => {
+        // load images
         let temp_img_dict = {};
         gallery.forEach((name) => {
-            if (import.meta.env.PROD) {
+            // Determine the ID of each card from Image URLs
+            if (import.meta.env.PROD) { // Image URLs are different on Production
                 let endIndex = name.lastIndexOf(".") - 9;
                 let startIndex = name.substring(0, endIndex).lastIndexOf("_") + 1;
                 temp_img_dict[name.substring(startIndex, endIndex)] = name;
@@ -125,6 +128,7 @@ function App() {
         })
         setImgDict(temp_img_dict);
 
+        // Load default Card Data
         $.ajax({
             type: "GET",
             url: defaultCSV,
@@ -135,59 +139,71 @@ function App() {
 
     return (
         <>
-            <h1>AU Deckbuilder</h1>
-            <hr class="hr" />
+            <div>
+                <h1>AU Deckbuilder</h1>
+                <hr className="hr" />
+            </div>
             <Container fluid>
-                <Row fluid>
+                <Row>
                     <Col lg={5}>
                         <h2>Instructions</h2>
                         <ul>
                             <li>Import a CSV or scroll down to the <a href="#table">Table</a> to get started!</li>
                             <li>Use the filters to help find the cards you want to add in the table. Use ctrl-click to select multiple.</li>
-                            <li>Give your deck a name and save it as a CSV to edit it later or as a TTS face image to import it right into Tabletop Simulator!</li>
+                            <li>Give your deck a name and save it as a CSV to edit it later or as a PNG to import it right into Tabletop Simulator!</li>
+                            <li>Import into TTS using Objects->Components->Cards->Custom Deck with Width 10, Height 6, and Back is Hidden.  Remember to select the correct Number (of cards) as well.</li>
                         </ul>
-                        
-                        <hr class="hr"/>
+                        <hr className="hr" />
+                        <h2>Helpful Links</h2>
+                        <ul>
+                            <li><a href="https://docs.google.com/document/d/1ugf1jPtwdqVR7T10WZrzN0rqWBDUZOmKxP2Rj-eh0O4/edit?usp=sharing" target="_blank">Game Rules</a></li>
+                            <li><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3252480722" target="_blank">Game Board</a></li>
+                            <li><a href={defaultCSV} target="_blank">CSV Template</a></li>
+                        </ul>
+                        <hr className="hr" />
                         <h2>Import CSV</h2>
                         <Form.Control size="lg" name="file" type="file" onChange={function (e) {
                             let _file = e.target.files[0];
                             const reader = new FileReader();
-                            reader.onload = (e) => {
-                                load_csv(e.target.result);
-                            };
+                            reader.onload = (e) => { load_csv(e.target.result); };
                             reader.readAsText(_file);
                         }
                         } />
-                        <hr class="hr" />
+                        <hr className="hr" />
                         <h2>Filters</h2>
-                        <Form>
-                            <h3>Faction</h3>
-                            <Form.Select id="faction_list" multiple htmlSize={7} onClick={updateFilters}>
-                                <option value="General">General</option>
-                                <option value="Arcan">Arcan</option>
-                                <option value="Bruct">Bruct</option>
-                                <option value="Diablo">Diablo</option>
-                                <option value="Grim">Grim</option>
-                                <option value="Myst">Myst</option>
-                                <option value="Rula">Rula</option>
-                            </Form.Select>
-                            <br />
-                            <h3>Type</h3>
-                            <Form.Select id="type_list" multiple htmlSize={4} onClick={updateFilters}>
-                                <option value="Unit">Unit</option>
-                                <option value="Spell">Spell</option>
-                                <option value="Structure">Structure</option>
-                                <option value="Commander">Commander</option>
-                            </Form.Select>
-                        </Form>
-                        <hr class="hr" />
+                        <Container fluid>
+                            <Row>
+                                <Col>
+                                    <h4>Faction</h4>
+                                    <Form.Select id="faction_list" multiple htmlSize={7} onClick={() => updateFilters(csv_data)}>
+                                        <option value="General">General</option>
+                                        <option value="Arcan">Arcan</option>
+                                        <option value="Bruct">Bruct</option>
+                                        <option value="Diablo">Diablo</option>
+                                        <option value="Grim">Grim</option>
+                                        <option value="Myst">Myst</option>
+                                        <option value="Rula">Rula</option>
+                                    </Form.Select>
+                                </Col>
+                                <Col>
+                                    <h4>Type</h4>
+                                    <Form.Select id="type_list" multiple htmlSize={7} onClick={() => updateFilters(csv_data)}>
+                                        <option value="Unit">Unit</option>
+                                        <option value="Spell">Spell</option>
+                                        <option value="Structure">Structure</option>
+                                        <option value="Commander">Commander</option>
+                                    </Form.Select>
+                                </Col>
+                            </Row>
+                        </Container>
+                        <hr className="hr" />
                         <h2>Downloads</h2>
                         <Stack direction="horizontal" gap={0}>
-                            <Form.Control placeholder="File Name" style={{maxWidth: "60%"}} id="filename" size="lg" type="text"></Form.Control>
-                            <div className="p-2"><Button onClick={ downloadCSV }>Download as CSV</Button></div>
-                            <div className="p-2"><Button onClick={downloadImage }>Download as TTS Face Image</Button></div>
+                            <Form.Control placeholder="File Name" id="filename" size="lg" type="text"></Form.Control>
+                            <div className="px-1"><Button onClick={downloadCSV}>CSV&nbsp;Export</Button></div>
+                            <div className="px-1"><Button onClick={downloadImage}>PNG&nbsp;Export</Button></div>
                         </Stack>
-                      
+
                     </Col>
                     <Col lg={7}>
                         <h2>Preview</h2>
@@ -202,17 +218,17 @@ function App() {
                                 ))}
                             </tbody>
                         </Table>
-                        <canvas id="final_output" width="7500" height="6300" hidden/>
+                        <canvas id="final_output" width="7500" height="6300" hidden />
                     </Col>
                 </Row>
             </Container>
 
-            <hr class="hr" />
+            <hr className="hr" />
             <h2 id="table">Table</h2>
-            <Table responsive>
-                <thead>
-                    <tr>
-                        <th>ID</th>
+            <Table striped bordered hover >
+                <thead style={{ position: "sticky", top: "-1px" }}>
+                    <tr >
+                        <th >ID</th>
                         {headers.map((value, index) => (
                             <th key={index}>{value}</th>
                         ))}
@@ -221,7 +237,7 @@ function App() {
                 <tbody>
                     {filtered_csv_data.map((row_value, index) => (
                         <tr>
-                            
+
                             {row_value.map((value, index2) => (
                                 <td key={index2}>{((index2 != 1) ? value : (<input style={{ "maxWidth": "50px" }} type="number" value={value} onChange={e => updateCount(row_value[0], e.target.value)} />))}</td>
                             ))}
@@ -229,7 +245,6 @@ function App() {
                     ))}
                 </tbody>
             </Table>
-            
         </>
     )
 }
