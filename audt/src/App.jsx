@@ -9,9 +9,12 @@ import Image from 'react-bootstrap/Image';
 import Stack from 'react-bootstrap/Stack';
 import Table from 'react-bootstrap/Table';
 import Form from 'react-bootstrap/Form';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import Tooltip from 'react-bootstrap/Tooltip';
 import Button from 'react-bootstrap/Button';
 import defaultCSV from '/AU_Card_Images/Card_Data.csv?url';
 import spacer from '/spacer.png?url';
+import reactStringReplace from 'react-string-replace';
 
 function App() {
     const [csv_data, setCsvData] = useState([[]]);
@@ -110,6 +113,33 @@ function App() {
         updateFilters(lines);
         updateDecklist(lines);
     }
+    function format_cell(value, index, row) {
+        if (value == undefined)
+            return "";
+        switch (index) {
+            case 1:
+                return (<input style={{ "maxWidth": "50px" }} type="number" value={value} onChange={(e) => { updateCount(row_value[0], e.target.value) }} />);
+                break;
+            case 2:
+                return (
+                    <OverlayTrigger placement="right" overlay={<Tooltip><Image style={{ maxWidth: "100%" }} src={img_dict[row[0]]}/></Tooltip>}>
+                        <a href={img_dict[row[0]]} target="_blank">{value}</a>
+                    </OverlayTrigger>
+                )
+                break;
+            case (parseInt(Object.keys(headers).find(key => headers[key] === "effect")) + 1):
+                if (value.charAt(0) === '"')
+                    value = value.substring(1, value.length - 1);
+                value = value.replace(/<br\s*[\/]?>/gi, " _ ");
+                value = reactStringReplace(value, '<<!mana>>', (match, i) => (<Image style={{ "maxHeight": "20px" }} src="mana.png"/>));
+                value = reactStringReplace(value, '<<!gold>>', (match, i) => (<Image style={{ "maxHeight": "20px" }} src="gold.png"/>));
+                return value;
+                break;
+            default:
+                return value;
+        }
+        
+    }
 
     // Perform First Time Setup
     useEffect(() => {
@@ -162,13 +192,15 @@ function App() {
                         </ul>
                         <hr className="hr" />
                         <h2>Import CSV</h2>
-                        <Form.Control size="lg" name="file" type="file" onChange={function (e) {
-                            let _file = e.target.files[0];
-                            const reader = new FileReader();
-                            reader.onload = (e) => { load_csv(e.target.result); };
-                            reader.readAsText(_file);
-                        }
-                        } />
+                        <Form.Control size="lg" name="file" type="file" 
+                            onChange={function (e) {
+                                let _file = e.target.files[0];
+                                let _form = e.target;
+                                const reader = new FileReader();
+                                reader.onload = (e2) => { load_csv(e2.target.result); _form.value = null; };
+                                reader.readAsText(_file);
+                            }}
+                        />
                         <hr className="hr" />
                         <h2>Filters</h2>
                         <Container fluid>
@@ -239,7 +271,7 @@ function App() {
                         <tr>
 
                             {row_value.map((value, index2) => (
-                                <td key={index2}>{((index2 != 1) ? value : (<input style={{ "maxWidth": "50px" }} type="number" value={value} onChange={e => updateCount(row_value[0], e.target.value)} />))}</td>
+                                <td key={index2}>{format_cell(value, index2, row_value)}</td>
                             ))}
                         </tr>
                     ))}
