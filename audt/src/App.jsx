@@ -25,19 +25,31 @@ function App() {
     const [headers, setHeaders] = useState([]);
     const [img_dict, setImgDict] = useState({});
     const [decklist, setDecklist] = useState([]);
+    const [header_lookup, setHeaderLookup] = useState({});
+    const [faction_list, setFactionList] = useState([]);
+    const [type_list, setTypeList] = useState([]);
+    const [tag_list, setTagList] = useState([]);
     const gallery = Object.values(import.meta.glob('/AU_Card_Images/*/*.png', { eager: true, query: '?url', import: 'default' }));
+    const getImageKey = function (url) {
+        let filename = url.substring(url.lastIndexOf("/")+1);
+        let start = filename.indexOf("_") + 1;
+        let end = start + filename.substring(start + 1).indexOf("_")+1;
+        return decodeURI(filename.substring(start, end)).replace(" ", String.fromCharCode(160));
+    }
+    const getImg = function (key) { return img_dict[(key ?? "").replace(/[\(\)]/g, "")]; }
+    const getImgKeyHeaderIndex = function () { return header_lookup["name"] };
 
 
     // Controller Functions
     function updateCount(id, count) { // change the count associated with a specific card ID
-        let temp_csv_data = csv_data.map((row, index) => row.map((value, index2) => (row[0] == id && index2 == 1) ? count : value));
+        let temp_csv_data = csv_data.map((row, index) => row.map((value, index2) => (row[0] == id && index2 == header_lookup["Count"]) ? count : value));
         setCsvData(temp_csv_data);
-        setFilteredCsvData(filtered_csv_data.map((row, index) => row.map((value, index2) => (row[0] == id && index2 == 1) ? count : value)));
+        setFilteredCsvData(filtered_csv_data.map((row, index) => row.map((value, index2) => (row[0] == id && index2 == header_lookup["Count"]) ? count : value)));
         updateDecklist(temp_csv_data);
     }
     function downloadCSV() { // Convert decklist into CSV format and download
         let csvContent = "data:text/csv;charset=utf-8,"
-            + headers.join(",") + "\n"
+            + headers.slice(1).join(",") + "\n"
             + csv_data.map(e => e.slice(1).join(",")).join("\n");
         var encodedUri = encodeURI(csvContent);
         var aDownloadLink = document.createElement('a');
@@ -58,7 +70,7 @@ function App() {
                 ctx.drawImage(img, 750 * (index % 10), 1050 * (Math.floor(index / 10)));
                 countdown--;
             });
-            img.src = img_dict[decklist[index]] ?? spacer;
+            img.src = getImg(decklist[index]) ?? spacer;
         });
 
         // Wait for each image to be drawn, then download the canvas as a PNG
@@ -81,24 +93,31 @@ function App() {
         let temp_decklist = [];
         data.forEach((row) => {
             for (let i = 0; i < row[1]; i++) {
-                temp_decklist.push(row[0]);
+                temp_decklist.push(row[getImgKeyHeaderIndex()]);
             }
-        })
+        });
         setDecklist(temp_decklist);
     }
     function updateFilters(_data) { // Filter the list
         let faction_list = $('#faction_list').val();
         let type_list = $('#type_list').val();
+        let tag_list = $('#tag_list').val();
         if (_data === null) _data = csv_data;
         setFilteredCsvData(_data.filter((row) => {
-            return (type_list == undefined || type_list.includes(row[3]) || type_list.length == 0) && (faction_list == undefined || faction_list.includes(row[4]) || faction_list.length == 0)
+            return (type_list == undefined || type_list.includes(row[header_lookup["type"]]) || type_list.length == 0) &&
+                (faction_list == undefined || faction_list.includes(row[header_lookup["faction"]]) || faction_list.length == 0) &&
+                (tag_list == undefined || Object.keys(header_lookup).filter(header => header.includes("tag")).some(header => tag_list.includes(row[header_lookup[header]])) || tag_list.length == 0);
+
         }));
     }
     function load_csv(data) { // convert CSV input into array
         // Grab headers and rows
         var allTextLines = data.split(/\r\n|\n/);
-        var _headers = allTextLines[0].replace(/\s/g, String.fromCharCode(160)).split(',');
+        let _headers = ["ID"].concat(allTextLines[0].replace(/\s/g, String.fromCharCode(160)).split(','));
+        let _header_lookup = Object.fromEntries(Object.entries(_headers).map(([key, value]) => [value, parseInt(key)]));
         setHeaders(_headers);
+        setHeaderLookup(_header_lookup);
+
         var lines = [];
 
         // Create each row array
@@ -107,12 +126,20 @@ function App() {
             if (data.length < 3) continue; // handle bad data
             var tarr = [];
             tarr.push(i - 1)
-            for (var j = 0; j < _headers.length; j++) {
+            for (var j = 0; j < _headers.length - 1; j++) {
                 if (j == 1) data[j] = data[j].replace(/\s/g, String.fromCharCode(160));
                 tarr.push(data[j]);
             }
             lines.push(tarr);
         }
+
+        let _faction_list = [...new Set(lines.map((row) => row[_header_lookup["faction"]]))];
+        let _type_list = [...new Set(lines.map((row) => row[_header_lookup["type"]]))];
+        let _tag_list = [...new Set([].concat(Object.keys(_header_lookup).filter(header => header.includes("tag")).map(header => lines.map((row) => row[_header_lookup[header]]))).flat().filter(a => a != null))];
+
+        setFactionList(_faction_list);
+        setTypeList(_type_list);
+        setTagList(_tag_list);
         setCsvData(lines);
         updateFilters(lines);
         updateDecklist(lines);
@@ -121,17 +148,17 @@ function App() {
         if (value == undefined)
             return "";
         switch (index) {
-            case 1:
+            case header_lookup["Count"]:
                 return (<input style={{ "maxWidth": "50px" }} type="number" value={value} onChange={(e) => { updateCount(row[0], e.target.value) }} />);
                 break;
-            case 2:
+            case header_lookup["name"]:
                 return (
-                    <OverlayTrigger placement="right" overlay={<Tooltip><Image style={{ maxWidth: "100%" }} src={img_dict[row[0]]}/></Tooltip>}>
-                        <a href={img_dict[row[0]]} target="_blank">{value}</a>
+                    <OverlayTrigger placement="right" overlay={<Tooltip><Image style={{ maxWidth: "100%" }} src={getImg(row[getImgKeyHeaderIndex()])} /></Tooltip>}>
+                        <a href={getImg(row[getImgKeyHeaderIndex()]) ?? spacer} target="_blank">{value}</a>
                     </OverlayTrigger>
                 )
                 break;
-            case (parseInt(Object.keys(headers).find(key => headers[key] === "effect")) + 1):
+            case header_lookup["effect"]:
                 if (value.charAt(0) === '"')
                     value = value.substring(1, value.length - 1);
                 value = value.replace(/<br\s*[\/]?>/gi, " _ ");
@@ -149,16 +176,8 @@ function App() {
     useEffect(() => {
         // load images
         let temp_img_dict = {};
-        gallery.forEach((name) => {
-            // Determine the ID of each card from Image URLs
-            if (import.meta.env.PROD) { // Image URLs are different on Production
-                let endIndex = name.lastIndexOf(".") - 9;
-                let startIndex = name.substring(0, endIndex).lastIndexOf("_") + 1;
-                temp_img_dict[name.substring(startIndex, endIndex)] = name;
-            }
-            else {
-                temp_img_dict[name.substring(name.lastIndexOf("_") + 1, name.lastIndexOf("."))] = name;
-            }
+        gallery.forEach((url) => {
+            temp_img_dict[getImageKey(url)] = url;
         })
         setImgDict(temp_img_dict);
 
@@ -212,22 +231,19 @@ function App() {
                                 <Col>
                                     <h4>Faction</h4>
                                     <Form.Select id="faction_list" multiple htmlSize={7} onClick={() => updateFilters(csv_data)}>
-                                        <option value="General">General</option>
-                                        <option value="Arcan">Arcan</option>
-                                        <option value="Bruct">Bruct</option>
-                                        <option value="Diablo">Diablo</option>
-                                        <option value="Grim">Grim</option>
-                                        <option value="Myst">Myst</option>
-                                        <option value="Rula">Rula</option>
+                                        {faction_list.map((value) => (<option value={value}>{value}</option>))}
                                     </Form.Select>
                                 </Col>
                                 <Col>
                                     <h4>Type</h4>
                                     <Form.Select id="type_list" multiple htmlSize={7} onClick={() => updateFilters(csv_data)}>
-                                        <option value="Unit">Unit</option>
-                                        <option value="Spell">Spell</option>
-                                        <option value="Structure">Structure</option>
-                                        <option value="Commander">Commander</option>
+                                        {type_list.map((value) => (<option value={value}>{value}</option>))}
+                                    </Form.Select>
+                                </Col>
+                                <Col>
+                                    <h4>Tag</h4>
+                                    <Form.Select id="tag_list" multiple htmlSize={7} onClick={() => updateFilters(csv_data)}>
+                                        {tag_list.map((value) => (<option value={value}>{value}</option>))}
                                     </Form.Select>
                                 </Col>
                             </Row>
@@ -247,10 +263,10 @@ function App() {
                             <tbody>
                                 {Array.from(Array(6).keys()).map((_, row) => (
                                     <tr>
-                                        {Array.from(Array(10).keys()).map((_, col) => (img_dict[decklist[row * 10 + col]] != null) ?
+                                        {Array.from(Array(10).keys()).map((_, col) => (getImg(decklist[row * 10 + col]) != null) ?
                                             (
-                                                <td><OverlayTrigger hidden placement="left" overlay={<Tooltip><Image style={{ maxWidth: "100%" }} src={img_dict[decklist[row * 10 + col]]}/></Tooltip>}>
-                                                    <Image style={{ maxWidth: "100%" }} src={img_dict[decklist[row * 10 + col]]}/>
+                                                <td><OverlayTrigger hidden placement="left" overlay={<Tooltip><Image style={{ maxWidth: "100%" }} src={getImg(decklist[row * 10 + col])}/></Tooltip>}>
+                                                    <Image style={{ maxWidth: "100%" }} src={getImg(decklist[row * 10 + col])}/>
                                                 </OverlayTrigger></td>
                                             )
                                             :
@@ -270,19 +286,13 @@ function App() {
             <Table striped bordered hover >
                 <thead style={{ position: "sticky", top: "-1px" }}>
                     <tr >
-                        <th >ID</th>
-                        {headers.map((value, index) => (
-                            <th key={index}>{value}</th>
-                        ))}
+                        {headers.map((value, index) => (<th key={index}>{value}</th>))}
                     </tr>
                 </thead>
                 <tbody>
                     {filtered_csv_data.map((row_value, index) => (
                         <tr>
-
-                            {row_value.map((value, index2) => (
-                                <td key={index2}>{format_cell(value, index2, row_value)}</td>
-                            ))}
+                            {row_value.map((value, index2) => (<td key={index2}>{format_cell(value, index2, row_value)}</td>))}
                         </tr>
                     ))}
                 </tbody>
