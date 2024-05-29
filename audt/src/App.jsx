@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import '/src/App.css';
 import $, { each } from 'jquery';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
@@ -245,9 +246,15 @@ function App() {
                             <tbody>
                                 {Array.from(Array(6).keys()).map((_, row) => (
                                     <tr>
-                                        {Array.from(Array(10).keys()).map((_, col) => (
-                                            <td><Image style={{ maxWidth: "100%" }} src={img_dict[decklist[row * 10 + col]] ?? spacer}></Image></td>
-                                        ))}
+                                        {Array.from(Array(10).keys()).map((_, col) => (img_dict[decklist[row * 10 + col]] != null) ?
+                                            (
+                                                <td><OverlayTrigger hidden placement="left" overlay={<Tooltip><Image style={{ maxWidth: "100%" }} src={img_dict[decklist[row * 10 + col]]}/></Tooltip>}>
+                                                    <Image style={{ maxWidth: "100%" }} src={img_dict[decklist[row * 10 + col]]}/>
+                                                </OverlayTrigger></td>
+                                            )
+                                            :
+                                            (<td><Image style={{ maxWidth: "100%" }} src={spacer} /></td>)
+                                        )}
                                     </tr>
                                 ))}
                             </tbody>
