@@ -104,6 +104,7 @@ function App() {
         // Create each row array
         for (var i = 1; i < allTextLines.length; i++) {
             var data = allTextLines[i].match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
+            if (data.length < 3) continue; // handle bad data
             var tarr = [];
             tarr.push(i - 1)
             for (var j = 0; j < _headers.length; j++) {
@@ -125,7 +126,7 @@ function App() {
                 break;
             case 2:
                 return (
-                    <OverlayTrigger placement="right" overlay={<Tooltip><Image style={{ maxWidth: "100%" }} src={img_dict[row[0]]} /></Tooltip>}>
+                    <OverlayTrigger placement="right" overlay={<Tooltip><Image style={{ maxWidth: "100%" }} src={img_dict[row[0]]}/></Tooltip>}>
                         <a href={img_dict[row[0]]} target="_blank">{value}</a>
                     </OverlayTrigger>
                 )
