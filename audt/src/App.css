@@ -1,6 +1,5 @@
-.tooltip-inner {
+.popover {
     max-width: 350px;
-    /* If max-width does not work, try using width instead */
     width: 350px;
 }
 .tooltip-inner.show {
@@ -8,4 +7,30 @@
 }
 .tooltip.show {
     opacity: 100%;
+}
+
+table {
+    height: 1px;
+}
+tr {
+    height: 100%;
+}
+
+td {
+    height: 100%;
+    vertical-align: middle;
+    white-space: pre-wrap;
+}
+
+td > div.container {
+    height: 100%;
+    vertical-align: middle;
+    align-items: center;
+    padding-left: 0;
+    display: flex;
+}
+
+td > div.numeric {
+    text-align: center;
+    width: 100%;
 }

@@ -12,6 +12,7 @@ import Table from 'react-bootstrap/Table';
 import Form from 'react-bootstrap/Form';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
+import Popover from 'react-bootstrap/Popover';
 import Button from 'react-bootstrap/Button';
 import defaultCSV from '/AU_Card_Images/Card_Data.csv?url';
 import spacer from '/spacer.png?url';
@@ -113,7 +114,7 @@ function App() {
     function load_csv(data) { // convert CSV input into array
         // Grab headers and rows
         var allTextLines = data.split(/\r\n|\n/);
-        let _headers = ["ID"].concat(allTextLines[0].replace(/\s/g, String.fromCharCode(160)).split(','));
+        let _headers = ["ID"].concat(allTextLines[0].split(','));
         let _header_lookup = Object.fromEntries(Object.entries(_headers).map(([key, value]) => [value, parseInt(key)]));
         setHeaders(_headers);
         setHeaderLookup(_header_lookup);
@@ -148,23 +149,45 @@ function App() {
         if (value == undefined)
             return "";
         switch (index) {
+            case header_lookup["ID"]:
+                return <div className="numeric">{value}</div>
             case header_lookup["Count"]:
-                return (<input style={{ "maxWidth": "50px" }} type="number" value={value} onChange={(e) => { updateCount(row[0], e.target.value) }} />);
+                return (<Form.Control size="lg" style={{ "maxWidth": "100px", "padding": "20%" }} type="number"
+                    min="0" max={(["Commander", "Structure"].includes(row[header_lookup["type"]])) ? 1 : 3}
+                    value={value} onChange={(e) => { updateCount(row[0], e.target.value) }} />);
                 break;
             case header_lookup["name"]:
                 return (
-                    <OverlayTrigger placement="right" overlay={<Tooltip><Image style={{ maxWidth: "100%" }} src={getImg(row[getImgKeyHeaderIndex()])} /></Tooltip>}>
-                        <a href={getImg(row[getImgKeyHeaderIndex()]) ?? spacer} target="_blank">{value}</a>
+                    <OverlayTrigger placement="auto" trigger={['hover', 'focus']} overlay={
+                        <Popover>
+                            <Popover.Body>
+                                <Image style={{ maxWidth: "100%" }} src={getImg(row[getImgKeyHeaderIndex()])} />
+                            </Popover.Body>
+                        </Popover>
+                    }>
+                        <Container><Row><Col>{value}</Col></Row></Container>
                     </OverlayTrigger>
                 )
                 break;
             case header_lookup["effect"]:
                 if (value.charAt(0) === '"')
                     value = value.substring(1, value.length - 1);
-                value = value.replace(/<br\s*[\/]?>/gi, " _ ");
+                value = value.replace(/<br\s*[\/]?>/gi, "\n");
                 value = reactStringReplace(value, '<<!mana>>', (match, i) => (<Image style={{ "maxHeight": "20px" }} src={ mana } />));
                 value = reactStringReplace(value, '<<!gold>>', (match, i) => (<Image style={{ "maxHeight": "20px" }} src={ gold } />));
                 return value;
+                break;
+            case header_lookup["mana cost"]:
+                return <div className="numeric">{Array.from({ length: value }, (_, i) => <Image style={{ "maxHeight": "20px" }} src={mana} />)}</div>;
+                break;
+            case header_lookup["gold cost"]:
+                return (value > 0) ? <div className="numeric">{value}&nbsp;<Image style={{ "maxHeight": "20px" }} src={gold} /></div> : "";
+                break;
+            case header_lookup["power"]:
+                return (value > 0) ? <div className="numeric">{value}&nbsp;{String.fromCodePoint(0x2694)}</div> : "";
+                break;
+            case header_lookup["health"]:
+                return (value > 0) ? <div className="numeric">{value}&nbsp;{String.fromCodePoint(0x1F6E1)}</div> : "";
                 break;
             default:
                 return value;
@@ -265,8 +288,14 @@ function App() {
                                     <tr>
                                         {Array.from(Array(10).keys()).map((_, col) => (getImg(decklist[row * 10 + col]) != null) ?
                                             (
-                                                <td><OverlayTrigger hidden placement="left" overlay={<Tooltip><Image style={{ maxWidth: "100%" }} src={getImg(decklist[row * 10 + col])}/></Tooltip>}>
-                                                    <Image style={{ maxWidth: "100%" }} src={getImg(decklist[row * 10 + col])}/>
+                                                <td><OverlayTrigger hidden placement="auto" overlay={
+                                                    <Popover>
+                                                        <Popover.Body>
+                                                            <Image style={{ maxWidth: "100%" }} src={getImg(decklist[row * 10 + col])} />
+                                                        </Popover.Body>
+                                                    </Popover>
+                                                }>
+                                                    <Image style={{ maxWidth: "100%" }} src={getImg(decklist[row * 10 + col])} />
                                                 </OverlayTrigger></td>
                                             )
                                             :
@@ -286,7 +315,7 @@ function App() {
             <Table striped bordered hover >
                 <thead style={{ position: "sticky", top: "-1px" }}>
                     <tr >
-                        {headers.map((value, index) => (<th key={index}>{value}</th>))}
+                        {headers.map((value, index) => (<th key={index}>{value.replace(/\s/g, String.fromCharCode(160))}</th>))}
                     </tr>
                 </thead>
                 <tbody>
