@@ -124,7 +124,7 @@ function App() {
         // Create each row array
         for (var i = 1; i < allTextLines.length; i++) {
             var data = allTextLines[i].match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
-            if (data.length < 3) continue; // handle bad data
+            if (data == null || data.length < 3) continue; // handle bad data
             var tarr = [];
             tarr.push(i - 1)
             for (var j = 0; j < _headers.length - 1; j++) {
@@ -173,8 +173,10 @@ function App() {
                 if (value.charAt(0) === '"')
                     value = value.substring(1, value.length - 1);
                 value = value.replace(/<br\s*[\/]?>/gi, "\n");
+                value = value.replaceAll("<<!target>>", String.fromCodePoint(0x1F3AF));
                 value = reactStringReplace(value, '<<!mana>>', (match, i) => (<Image style={{ "maxHeight": "20px" }} src={ mana } />));
                 value = reactStringReplace(value, '<<!gold>>', (match, i) => (<Image style={{ "maxHeight": "20px" }} src={ gold } />));
+                value = reactStringReplace(value, /<b>([^<]+)<\/b>/g, (match, i) => (<strong>{match}</strong>));
                 return value;
                 break;
             case header_lookup["mana cost"]:
