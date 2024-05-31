@@ -176,7 +176,7 @@ function App() {
                 value = value.replaceAll("<<!target>>", String.fromCodePoint(0x1F3AF));
                 value = reactStringReplace(value, '<<!mana>>', (match, i) => (<Image style={{ "maxHeight": "20px" }} src={ mana } />));
                 value = reactStringReplace(value, '<<!gold>>', (match, i) => (<Image style={{ "maxHeight": "20px" }} src={ gold } />));
-                value = reactStringReplace(value, /<b>([^<]+)<\/b>/g, (match, i) => (<strong>{match}</strong>));
+                value = reactStringReplace(value, /<b>(.*?)<\/b>/g, (match, i) => (<strong>{match}</strong>));
                 return value;
                 break;
             case header_lookup["mana cost"]:
