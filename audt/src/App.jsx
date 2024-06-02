@@ -11,13 +11,15 @@ import Stack from 'react-bootstrap/Stack';
 import Table from 'react-bootstrap/Table';
 import Form from 'react-bootstrap/Form';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import Tooltip from 'react-bootstrap/Tooltip';
 import Popover from 'react-bootstrap/Popover';
 import Button from 'react-bootstrap/Button';
 import defaultCSV from '/AU_Card_Images/Card_Data.csv?url';
 import spacer from '/spacer.png?url';
 import mana from '/mana.png?url';
 import gold from '/gold.png?url'
+import target from '/target.png?url'
+import left from '/left.png?url'
+import right from '/right.png?url'
 import reactStringReplace from 'react-string-replace';
 
 function App() {
@@ -30,120 +32,160 @@ function App() {
     const [faction_list, setFactionList] = useState([]);
     const [type_list, setTypeList] = useState([]);
     const [tag_list, setTagList] = useState([]);
-    const gallery = Object.values(import.meta.glob('/AU_Card_Images/*/*.png', { eager: true, query: '?url', import: 'default' }));
+    const gallery = Object.values(import.meta.glob('/AU_Card_Images/*.png', { eager: true, query: '?url', import: 'default' }));
     const getImageKey = function (url) {
         let filename = url.substring(url.lastIndexOf("/")+1);
         let start = filename.indexOf("_") + 1;
         let end = start + filename.substring(start + 1).indexOf("_")+1;
         return decodeURI(filename.substring(start, end)).replace(" ", String.fromCharCode(160));
     }
-    const getImg = function (key) { return img_dict[(key ?? "").replace(/[\(\)]/g, "")]; }
+    const getImg = function (key) {
+        return img_dict[(key ?? "")
+            .replace(/[\(\)']/g, "")
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, '')]
+            ;
+    }
     const getImgKeyHeaderIndex = function () { return header_lookup["name"] };
 
 
     // Controller Functions
     function updateCount(id, count) { // change the count associated with a specific card ID
-        let temp_csv_data = csv_data.map((row, index) => row.map((value, index2) => (row[0] == id && index2 == header_lookup["Count"]) ? count : value));
-        setCsvData(temp_csv_data);
-        setFilteredCsvData(filtered_csv_data.map((row, index) => row.map((value, index2) => (row[0] == id && index2 == header_lookup["Count"]) ? count : value)));
-        updateDecklist(temp_csv_data);
+        try {
+            let temp_csv_data = csv_data.map((row, index) => row.map((value, index2) => (row[0] == id && index2 == header_lookup["Count"]) ? count : value));
+            setCsvData(temp_csv_data);
+            setFilteredCsvData(filtered_csv_data.map((row, index) => row.map((value, index2) => (row[0] == id && index2 == header_lookup["Count"]) ? count : value)));
+            updateDecklist(temp_csv_data);
+        } catch (e) {
+            console.log(e);
+            alert("Counting error")
+        }
     }
     function downloadCSV() { // Convert decklist into CSV format and download
-        let csvContent = "data:text/csv;charset=utf-8,"
-            + headers.slice(1).join(",") + "\n"
-            + csv_data.map(e => e.slice(1).join(",")).join("\n");
-        var encodedUri = encodeURI(csvContent);
-        var aDownloadLink = document.createElement('a');
-        aDownloadLink.download = $("#filename").val() + ".csv";
-        aDownloadLink.href = encodedUri;
-        aDownloadLink.click();
+        try {
+            let csvContent = "data:text/csv;charset=utf-8,"
+                + headers.slice(1).join(",") + "\n"
+                + csv_data.map(e => e.slice(1).join(",")).join("\n");
+            var encodedUri = encodeURI(csvContent);
+            var aDownloadLink = document.createElement('a');
+            aDownloadLink.download = $("#filename").val() + ".csv";
+            aDownloadLink.href = encodedUri;
+            aDownloadLink.click();
+        } catch (e) {
+            console.log(e);
+            alert("Error making CSV");
+        }
     }
     function downloadImage() { // Draw TTS Custom Deck Image
         // Set up the canvas fr drawing
-        const canvas = document.getElementById("final_output");
-        const ctx = canvas.getContext("2d");
-        let countdown = decklist.length;
+        try {
+            const canvas = document.getElementById("final_output");
+            const ctx = canvas.getContext("2d");
+            let countdown = decklist.length;
 
-        // Draw each image onto the canvas
-        decklist.forEach((key, index) => {
-            const img = document.createElement('img');
-            img.addEventListener("load", () => {
-                ctx.drawImage(img, 750 * (index % 10), 1050 * (Math.floor(index / 10)));
-                countdown--;
+            // Draw each image onto the canvas
+            decklist.forEach((key, index) => {
+                const img = document.createElement('img');
+                img.addEventListener("load", () => {
+                    ctx.drawImage(img, 750 * (index % 10), 1050 * (Math.floor(index / 10)));
+                    countdown--;
+                });
+                img.src = getImg(decklist[index]) ?? spacer;
             });
-            img.src = getImg(decklist[index]) ?? spacer;
-        });
 
-        // Wait for each image to be drawn, then download the canvas as a PNG
-        let checkComplete = function () {
-            if (countdown == 0) {
-                var dataURL = canvas.toDataURL("image/png");
-                var aDownloadLink = document.createElement('a');
-                aDownloadLink.download = $("#filename").val() + ".png";
-                aDownloadLink.href = dataURL;
-                aDownloadLink.click();
-            } else {
-                setTimeout(checkComplete, 50);
+            // Wait for each image to be drawn, then download the canvas as a PNG
+            let checkComplete = function () {
+                if (countdown == 0) {
+                    var dataURL = canvas.toDataURL("image/png");
+                    var aDownloadLink = document.createElement('a');
+                    aDownloadLink.download = $("#filename").val() + ".png";
+                    aDownloadLink.href = dataURL;
+                    aDownloadLink.click();
+                } else {
+                    setTimeout(checkComplete, 50);
+                }
             }
-        }
 
-        checkComplete();
+            checkComplete();
+        } catch (e) {
+            console.log(e);
+            alert("Error making PNG.")
+        }
 
     }
     function updateDecklist(data) { // Create the decklist array
-        let temp_decklist = [];
-        data.forEach((row) => {
-            for (let i = 0; i < row[1]; i++) {
-                temp_decklist.push(row[getImgKeyHeaderIndex()]);
-            }
-        });
-        setDecklist(temp_decklist);
+        try {
+            let temp_decklist = [];
+            data.forEach((row) => {
+                for (let i = 0; i < row[1]; i++) {
+                    temp_decklist.push(row[getImgKeyHeaderIndex()]);
+                }
+            });
+            setDecklist(temp_decklist);
+        } catch (e) {
+            console.log(e);
+            alert("Error updating deck.")
+        }
     }
     function updateFilters(_data) { // Filter the list
-        let faction_list = $('#faction_list').val();
-        let type_list = $('#type_list').val();
-        let tag_list = $('#tag_list').val();
-        if (_data === null) _data = csv_data;
-        setFilteredCsvData(_data.filter((row) => {
-            return (type_list == undefined || type_list.includes(row[header_lookup["type"]]) || type_list.length == 0) &&
-                (faction_list == undefined || faction_list.includes(row[header_lookup["faction"]]) || faction_list.length == 0) &&
-                (tag_list == undefined || Object.keys(header_lookup).filter(header => header.includes("tag")).some(header => tag_list.includes(row[header_lookup[header]])) || tag_list.length == 0);
+        try {
+            let faction_list = $('#faction_list').val();
+            let type_list = $('#type_list').val();
+            let tag_list = $('#tag_list').val();
+            if (_data === null) _data = csv_data;
+            setFilteredCsvData(_data.filter((row) => {
+                return (type_list == undefined || type_list.includes(row[header_lookup["type"]]) || type_list.length == 0) &&
+                    (faction_list == undefined || faction_list.includes(row[header_lookup["faction"]]) || faction_list.length == 0 ||
+                        (faction_list.includes("Tag") && row[header_lookup["tag1"]] != null)
+                    ) &&
+                    (tag_list == undefined || tag_list.length == 0 ||
+                        (faction_list.includes("Tag") && row[header_lookup["tag1"]] == null) ||
+                        Object.keys(header_lookup).filter(header => header.includes("tag")).some(header => tag_list.includes(row[header_lookup[header]]))
+                     );
 
-        }));
+            }));
+        } catch (e) {
+            console.log(e);
+            alert("filtering error");
+        }
     }
     function load_csv(data) { // convert CSV input into array
-        // Grab headers and rows
-        var allTextLines = data.split(/\r\n|\n/);
-        let _headers = ["ID"].concat(allTextLines[0].split(','));
-        let _header_lookup = Object.fromEntries(Object.entries(_headers).map(([key, value]) => [value, parseInt(key)]));
-        setHeaders(_headers);
-        setHeaderLookup(_header_lookup);
+        try {
+            // Grab headers and rows
+            var allTextLines = data.split(/\r\n|\n/);
+            let _headers = ["ID"].concat(allTextLines[0].split(','));
+            let _header_lookup = Object.fromEntries(Object.entries(_headers).map(([key, value]) => [value, parseInt(key)]));
+            setHeaders(_headers);
+            setHeaderLookup(_header_lookup);
 
-        var lines = [];
+            var lines = [];
 
-        // Create each row array
-        for (var i = 1; i < allTextLines.length; i++) {
-            var data = allTextLines[i].match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
-            if (data == null || data.length < 3) continue; // handle bad data
-            var tarr = [];
-            tarr.push(i - 1)
-            for (var j = 0; j < _headers.length - 1; j++) {
-                if (j == 1) data[j] = data[j].replace(/\s/g, String.fromCharCode(160));
-                tarr.push(data[j]);
+            // Create each row array
+            for (var i = 1; i < allTextLines.length; i++) {
+                var data = allTextLines[i].match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
+                if (data == null || data.length < 3) continue; // handle bad data
+                var tarr = [];
+                tarr.push(i - 1)
+                for (var j = 0; j < _headers.length - 1; j++) {
+                    if (j == 1) data[j] = data[j].replace(/\s/g, String.fromCharCode(160));
+                    tarr.push(data[j]);
+                }
+                lines.push(tarr);
             }
-            lines.push(tarr);
+
+            let _faction_list = [...new Set(lines.map((row) => row[_header_lookup["faction"]]))];
+            let _type_list = [...new Set(lines.map((row) => row[_header_lookup["type"]]))];
+            let _tag_list = [...new Set([].concat(Object.keys(_header_lookup).filter(header => header.includes("tag")).map(header => lines.map((row) => row[_header_lookup[header]]))).flat().filter(a => a != null))];
+
+            setFactionList(_faction_list);
+            setTypeList(_type_list);
+            setTagList(_tag_list);
+            setCsvData(lines);
+            updateFilters(lines);
+            updateDecklist(lines);
+        } catch (e) {
+            console.log(e);
+            alert("Error reading CSV");
         }
-
-        let _faction_list = [...new Set(lines.map((row) => row[_header_lookup["faction"]]))];
-        let _type_list = [...new Set(lines.map((row) => row[_header_lookup["type"]]))];
-        let _tag_list = [...new Set([].concat(Object.keys(_header_lookup).filter(header => header.includes("tag")).map(header => lines.map((row) => row[_header_lookup[header]]))).flat().filter(a => a != null))];
-
-        setFactionList(_faction_list);
-        setTypeList(_type_list);
-        setTagList(_tag_list);
-        setCsvData(lines);
-        updateFilters(lines);
-        updateDecklist(lines);
     }
     function format_cell(value, index, row) {
         if (value == undefined)
@@ -157,42 +199,83 @@ function App() {
                     value={value} onChange={(e) => { updateCount(row[0], e.target.value) }} />);
                 break;
             case header_lookup["name"]:
-                return (
-                    <OverlayTrigger placement="auto" trigger={['hover', 'focus']} overlay={
-                        <Popover>
-                            <Popover.Body>
-                                <Image style={{ maxWidth: "100%" }} src={getImg(row[getImgKeyHeaderIndex()])} />
-                            </Popover.Body>
-                        </Popover>
-                    }>
-                        <Container><Row><Col>{value}</Col></Row></Container>
-                    </OverlayTrigger>
-                )
+                try {
+                    return (
+                        <OverlayTrigger placement="auto" trigger={['hover', 'focus']} overlay={
+                            <Popover>
+                                <Popover.Body>
+                                    <Image style={{ maxWidth: "100%" }} src={getImg(row[getImgKeyHeaderIndex()])} />
+                                </Popover.Body>
+                            </Popover>
+                        }>
+                            <Container><Row><Col>{value}</Col></Row></Container>
+                        </OverlayTrigger>
+                    )
+                } catch (e) {
+                    console.log(e);
+                    return errorText("Error loading name");
+                }
                 break;
             case header_lookup["effect"]:
-                if (value.charAt(0) === '"')
-                    value = value.substring(1, value.length - 1);
-                value = value.replace(/<br\s*[\/]?>/gi, "\n");
-                value = value.replaceAll("<<!target>>", String.fromCodePoint(0x1F3AF));
-                value = reactStringReplace(value, '<<!mana>>', (match, i) => (<Image style={{ "maxHeight": "20px" }} src={ mana } />));
-                value = reactStringReplace(value, '<<!gold>>', (match, i) => (<Image style={{ "maxHeight": "20px" }} src={ gold } />));
-                value = reactStringReplace(value, /<b>(.*?)<\/b>/g, (match, i) => (<strong>{match}</strong>));
-                return value;
+                try {
+                    if (value.charAt(0) === '"')
+                        value = value.substring(1, value.length - 1);
+                    value = value.replace(/<br\s*[\/]?>/gi, "\n");
+                    value = reactStringReplace(value, '<<!mana>>', (match, i) => (<Image style={{ "maxHeight": "20px" }} src={mana} />));
+                    value = reactStringReplace(value, '<<!gold>>', (match, i) => (<Image style={{ "maxHeight": "20px" }} src={gold} />));
+                    value = reactStringReplace(value, '<<!target>>', (match, i) => (<Image style={{ "maxHeight": "20px" }} src={target} />));
+                    value = reactStringReplace(value, '<<!right>>', (match, i) => (<Image style={{ "maxHeight": "20px" }} src={right} />));
+                    value = reactStringReplace(value, '<<!left>>', (match, i) => (<Image style={{ "maxHeight": "20px" }} src={left} />));
+                    value = reactStringReplace(value, /<b>(.*?)<\/b>/g, (match, i) => (<strong>{match}</strong>));
+                    return value;
+                } catch (e) {
+                    console.log(e);
+                    return errorText("Error reading this effect.");
+                }
                 break;
             case header_lookup["mana cost"]:
-                return <div className="numeric">{Array.from({ length: value }, (_, i) => <Image style={{ "maxHeight": "20px" }} src={mana} />)}</div>;
+                try {
+                    return <div className="numeric">{Array.from({ length: value }, (_, i) => <Image style={{ "maxHeight": "20px" }} src={mana} />)}</div>;
+                } catch (e) {
+                    console.log(e);
+                    return errorText("Error");
+                }
                 break;
             case header_lookup["gold cost"]:
-                return (value > 0) ? <div className="numeric">{value}&nbsp;<Image style={{ "maxHeight": "20px" }} src={gold} /></div> : "";
+                try {
+                    return (value > 0) ? <div className="numeric">{value}&nbsp;<Image style={{ "maxHeight": "20px" }} src={gold} /></div> : "";
+                } catch (e) {
+                    console.log(e);
+                    return errorText("Error");
+                }
                 break;
             case header_lookup["power"]:
-                return (value > 0) ? <div className="numeric">{value}&nbsp;{String.fromCodePoint(0x2694)}</div> : "";
+                try {
+                    return (value > 0) ? <div className="numeric">{value}&nbsp;{String.fromCodePoint(0x2694)}</div> : "";
+                } catch (e) {
+                    console.log(e);
+                    return errorText("Error");
+                }
                 break;
             case header_lookup["health"]:
-                return (value > 0) ? <div className="numeric">{value}&nbsp;{String.fromCodePoint(0x1F6E1)}</div> : "";
+                try { 
+                    return (value > 0) ? <div className="numeric">{value}&nbsp;{String.fromCodePoint(0x1F6E1)}</div> : "";
+                } catch (e) {
+                    console.log(e);
+                    return errorText("Error");
+                }
                 break;
             default:
-                return value;
+                try {
+                    return value;
+                } catch (e) {
+                    console.log(e);
+                    return errorText("Error");
+                }
+        }
+
+        function errorText(text) {
+            return <p style={{ color: "red" }}>{text}</p>
         }
 
     }
@@ -227,7 +310,7 @@ function App() {
                         <h2>Instructions</h2>
                         <ul>
                             <li>Import a CSV or scroll down to the <a href="#table">Table</a> to get started!</li>
-                            <li>Use the filters to help find the cards you want to add in the table. Use ctrl-click to select multiple.</li>
+                            <li>Use the filters to help find the cards you want to add in the table. Use ctrl-click to select multiple. Use the "Tag" faction filter to include your Tags regardless of faction.</li>
                             <li>Give your deck a name and save it as a CSV to edit it later or as a PNG to import it right into Tabletop Simulator!</li>
                             <li>Import into TTS using Objects - Components - Cards - Custom Deck with Width 10, Height 6, and Back is Hidden.  Remember to select the correct Number (of cards) as well.</li>
                         </ul>
