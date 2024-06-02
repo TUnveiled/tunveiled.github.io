@@ -137,7 +137,7 @@ function App() {
                 let faction_match = (faction_list == undefined || faction_list.includes(row[header_lookup["faction"]]) || faction_list.length == 0);
                 let tag_match = (tag_list == undefined || tag_list.length == 0 || Object.keys(header_lookup).filter(header => header.includes("tag")).some(header => tag_list.includes(row[header_lookup[header]])));
 
-                return type_match && ((faction_match && tag_match) || (faction_list.includes("Tag") && (faction_match || tag_match)));
+                return type_match && ((faction_match && tag_match) || (faction_list.includes("Tag") && row[header_lookup["faction"]] != "Tag" && (faction_match || tag_match)));
 
             }));
         } catch (e) {
