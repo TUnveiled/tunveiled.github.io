@@ -133,14 +133,11 @@ function App() {
             let tag_list = $('#tag_list').val();
             if (_data === null) _data = csv_data;
             setFilteredCsvData(_data.filter((row) => {
-                return (type_list == undefined || type_list.includes(row[header_lookup["type"]]) || type_list.length == 0) &&
-                    (faction_list == undefined || faction_list.includes(row[header_lookup["faction"]]) || faction_list.length == 0 ||
-                        (faction_list.includes("Tag") && row[header_lookup["tag1"]] != null)
-                    ) &&
-                    (tag_list == undefined || tag_list.length == 0 ||
-                        (faction_list.includes("Tag") && row[header_lookup["tag1"]] == null) ||
-                        Object.keys(header_lookup).filter(header => header.includes("tag")).some(header => tag_list.includes(row[header_lookup[header]]))
-                     );
+                let type_match = (type_list == undefined || type_list.includes(row[header_lookup["type"]]) || type_list.length == 0);
+                let faction_match = (faction_list == undefined || faction_list.includes(row[header_lookup["faction"]]) || faction_list.length == 0);
+                let tag_match = (tag_list == undefined || tag_list.length == 0 || Object.keys(header_lookup).filter(header => header.includes("tag")).some(header => tag_list.includes(row[header_lookup[header]])));
+
+                return type_match && ((faction_match && tag_match) || (faction_list.includes("Tag") && (faction_match || tag_match)));
 
             }));
         } catch (e) {
