@@ -42,7 +42,7 @@ function App() {
     const getImg = function (key) {
         return img_dict[(key ?? "")
             .replace(/[\(\)']/g, "")
-            .normalize('NFD').replace(/[\u0300-\u036f]/g, '')]
+            .normalize('NFD').replace(/[a-z][\u0300-\u036f]/g, '')]
             ;
     }
     const getImgKeyHeaderIndex = function () { return header_lookup["name"] };
