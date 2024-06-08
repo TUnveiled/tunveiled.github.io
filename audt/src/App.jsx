@@ -27,11 +27,13 @@ function App() {
     const [filtered_csv_data, setFilteredCsvData] = useState([[]]);
     const [headers, setHeaders] = useState([]);
     const [img_dict, setImgDict] = useState({});
+    const [data_dict, setDataDict] = useState({});
     const [decklist, setDecklist] = useState([]);
     const [header_lookup, setHeaderLookup] = useState({});
     const [faction_list, setFactionList] = useState([]);
     const [type_list, setTypeList] = useState([]);
     const [tag_list, setTagList] = useState([]);
+    const [current_version, setCurrentVersion] = useState(true);
     const gallery = Object.values(import.meta.glob('/AU_Card_Images/*.png', { eager: true, query: '?url', import: 'default' }));
     const getImageKey = function (url) {
         let filename = url.substring(url.lastIndexOf("/")+1);
@@ -151,35 +153,67 @@ function App() {
             // Grab headers and rows
             var allTextLines = data.split(/\r\n|\n/);
             let _headers = ["ID"].concat(allTextLines[0].split(','));
-            let _header_lookup = Object.fromEntries(Object.entries(_headers).map(([key, value]) => [value, parseInt(key)]));
-            setHeaders(_headers);
-            setHeaderLookup(_header_lookup);
+            let _data_dict = data_dict;
 
-            var lines = [];
-
-            // Create each row array
-            for (var i = 1; i < allTextLines.length; i++) {
-                var data = allTextLines[i].match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
-                if (data == null || data.length < 3) continue; // handle bad data
-                var tarr = [];
-                tarr.push(i - 1)
-                for (var j = 0; j < _headers.length - 1; j++) {
-                    if (j == 1) data[j] = data[j].replace(/\s/g, String.fromCharCode(160));
-                    tarr.push(data[j]);
+            if (Object.keys(header_lookup).length === 0 || !current_version) {
+                let _header_lookup = Object.fromEntries(Object.entries(_headers).map(([key, value]) => [value, parseInt(key)]));
+                var lines = [];
+                // Create each row array
+                for (var i = 1; i < allTextLines.length; i++) {
+                    var data = allTextLines[i].match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
+                    if (data == null || data.length < 3) continue; // handle bad data
+                    var tarr = [];
+                    tarr.push(i - 1)
+                    for (var j = 0; j < _headers.length - 1; j++) {
+                        if (j == 1) data[j] = data[j].replace(/\s/g, String.fromCharCode(160));
+                        tarr.push(data[j]);
+                    }
+                    lines.push(tarr);
+                    _data_dict[tarr[_header_lookup["name"]]] = tarr;
                 }
-                lines.push(tarr);
+
+                let _faction_list = [...new Set(lines.map((row) => row[_header_lookup["faction"]]))];
+                let _type_list = [...new Set(lines.map((row) => row[_header_lookup["type"]]))];
+                let _tag_list = [...new Set([].concat(Object.keys(_header_lookup).filter(header => header.includes("tag"))
+                    .map(header => lines.map((row) => row[_header_lookup[header]]))).flat().filter(a => a != null))];
+
+                setHeaders(_headers);
+                setHeaderLookup(_header_lookup);
+                setFactionList(_faction_list);
+                setDataDict(_data_dict);
+                setTypeList(_type_list);
+                setTagList(_tag_list);
+                setCsvData(lines);
+                updateFilters(lines);
+                updateDecklist(lines);
+            } else {
+                let _csv_data = csv_data;
+                let _header_lookup = header_lookup;
+
+                // Create each row array
+                for (var i = 1; i < allTextLines.length; i++) {
+                    var new_data = allTextLines[i].match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
+                    if (new_data == null || new_data.length < 3) continue; // handle bad data
+                    var tarr = [];
+                    tarr.push(i - 1)
+                    for (var j = 0; j < _headers.length - 1; j++) {
+                        if (j == 1) new_data[j] = new_data[j].replace(/\s/g, String.fromCharCode(160));
+                        tarr.push(new_data[j]);
+                    } 
+
+                    _data_dict[tarr[_header_lookup["name"]]][_header_lookup["Count"]] = tarr[_header_lookup["Count"]];
+                }
+
+                for (let i = 0; i < _csv_data.length; i++) {
+                    _csv_data[i] = _data_dict[_csv_data[i][header_lookup["name"]]];
+                }
+
+                setDataDict(_data_dict);
+                setCsvData(_csv_data);
+                updateFilters(_csv_data);
+                updateDecklist(_csv_data);
             }
-
-            let _faction_list = [...new Set(lines.map((row) => row[_header_lookup["faction"]]))];
-            let _type_list = [...new Set(lines.map((row) => row[_header_lookup["type"]]))];
-            let _tag_list = [...new Set([].concat(Object.keys(_header_lookup).filter(header => header.includes("tag")).map(header => lines.map((row) => row[_header_lookup[header]]))).flat().filter(a => a != null))];
-
-            setFactionList(_faction_list);
-            setTypeList(_type_list);
-            setTagList(_tag_list);
-            setCsvData(lines);
-            updateFilters(lines);
-            updateDecklist(lines);
+  
         } catch (e) {
             console.log(e);
             alert("Error reading CSV");
@@ -280,20 +314,22 @@ function App() {
 
     // Perform First Time Setup
     useEffect(() => {
-        // load images
-        let temp_img_dict = {};
-        gallery.forEach((url) => {
-            temp_img_dict[getImageKey(url)] = url;
-        })
-        setImgDict(temp_img_dict);
+        if (Object.keys(data_dict).length === 0) {
+            // load images
+            let temp_img_dict = {};
+            gallery.forEach((url) => {
+                temp_img_dict[getImageKey(url)] = url;
+            })
+            setImgDict(temp_img_dict);
 
-        // Load default Card Data
-        $.ajax({
-            type: "GET",
-            url: defaultCSV,
-            dataType: "text",
-            success: load_csv
-        });
+            // Load default Card Data
+            $.ajax({
+                type: "GET",
+                url: defaultCSV,
+                dataType: "text",
+                success: load_csv
+            });
+        }
     }, []);
 
     return (
@@ -321,15 +357,24 @@ function App() {
                         </ul>
                         <hr className="hr" />
                         <h2>Import CSV</h2>
-                        <Form.Control size="lg" name="file" type="file"
-                            onChange={function (e) {
-                                let _file = e.target.files[0];
-                                let _form = e.target;
-                                const reader = new FileReader();
-                                reader.onload = (e2) => { load_csv(e2.target.result); _form.value = null; };
-                                reader.readAsText(_file);
-                            }}
-                        />
+                        <Stack direction="horizontal" gap={3} fluid>
+                            <div className="px-1" >
+                                <Form.Control size="lg" name="file" type="file"
+                                    onChange={function (e) {
+                                        let _file = e.target.files[0];
+                                        let _form = e.target;
+                                        const reader = new FileReader();
+                                        reader.onload = (e2) => { load_csv(e2.target.result); _form.value = null;};
+                                        reader.readAsText(_file);
+                                    }}
+                                />
+                            </div>
+                            <div className="px-1 me-auto">
+                                <Form.Check size="lg" name="checkBox" type="checkbox" label="Update Counts Only" checked={current_version}
+                                    onChange={(e) => { setCurrentVersion(e.target.checked); }} />
+                            </div>
+                        </Stack>
+                        
                         <hr className="hr" />
                         <h2>Filters</h2>
                         <Container fluid>
