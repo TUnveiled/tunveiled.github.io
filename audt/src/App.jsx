@@ -38,6 +38,13 @@ function App() {
     const [tag_list, setTagList] = useState([]);
     const [current_version, setCurrentVersion] = useState(true);
     const gallery = Object.values(import.meta.glob('/AU_Card_Images/*.png', { eager: true, query: '?url', import: 'default' }));
+    const consoleError = console.error;
+    const SUPPRESSED_WARNINGS = ['Each child in a list should have a unique "key" prop'];
+    console.error = function filterWarnings(msg, ...args) {
+        if (!SUPPRESSED_WARNINGS.some((entry) => msg.includes(entry))) {
+            consoleError(msg, ...args);
+        }
+    };
     const getID = function (row, _header_lookup) {
         _header_lookup = _header_lookup ?? header_lookup;
         return row[_header_lookup["name"]];
@@ -73,7 +80,7 @@ function App() {
     function downloadCSV() { // Convert decklist into CSV format and download
         try {
             let csvContent = "data:text/csv;charset=utf-8,"
-                + headers.slice(1).join(",") + "\n"
+                + headers.slice((header_lookup["ID"] == 1) ? 1 : 0).join(",") + "\n"
                 + csv_data.map(e => e.slice(1).join(",")).join("\n");
             var encodedUri = encodeURI(csvContent);
             var aDownloadLink = document.createElement('a');
@@ -126,7 +133,7 @@ function App() {
         try {
             let temp_decklist = [];
             data.forEach((row) => {
-                for (let i = 0; i < row[1]; i++) {
+                for (let i = 0; i < row[header_lookup["Count"]]; i++) {
                     temp_decklist.push(getID(row));
                 }
             });
@@ -160,7 +167,8 @@ function App() {
         try {
             // Grab headers and rows
             var allTextLines = data.split(/\r\n|\n/);
-            let _headers = ["ID"].concat(allTextLines[0].split(','));
+            let id_included = allTextLines[0].includes("ID");
+            let _headers = (id_included ? [] : ["ID"]).concat(allTextLines[0].split(','));
             let _data_dict = data_dict;
 
             if (Object.keys(header_lookup).length === 0 || !current_version) {
@@ -171,9 +179,12 @@ function App() {
                     var data = allTextLines[i].match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
                     if (data == null || data.length < 3) continue; // handle bad data
                     var tarr = [];
-                    tarr.push(i - 1)
-                    for (var j = 0; j < _headers.length - 1; j++) {
-                        if (j == 1) data[j] = data[j].replace(/\s/g, String.fromCharCode(160));
+                    if (!id_included)
+                        tarr.push(i - 1);
+                    for (var j = 0; j < _headers.length - (id_included ? 0 : 1); j++) {
+                        if (j === _header_lookup["name"] - (id_included ? 0 : 1)) {
+                            data[j] = data[j].replace(/\s/g, String.fromCharCode(160));
+                        }
                         tarr.push(data[j]);
                     }
                     lines.push(tarr);
@@ -203,9 +214,10 @@ function App() {
                     var new_data = allTextLines[i].match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
                     if (new_data == null || new_data.length < 3) continue; // handle bad data
                     var tarr = [];
-                    tarr.push(i - 1)
+                    if (!id_included)
+                        tarr.push(i - 1);
                     for (var j = 0; j < _headers.length - 1; j++) {
-                        if (j == 1) new_data[j] = new_data[j].replace(/\s/g, String.fromCharCode(160));
+                        if (j === _header_lookup["name"]) new_data[j] = new_data[j].replace(/\s/g, String.fromCharCode(160));
                         tarr.push(new_data[j]);
                     } 
 
@@ -275,7 +287,7 @@ function App() {
                 break;
             case header_lookup["mana cost"]:
                 try {
-                    return <div className="numeric">{Array.from({ length: value }, (_, i) => <Image style={{ "maxHeight": "20px" }} src={mana} />)}</div>;
+                    return <div className="numeric">{Array.from({ length: value }, (_, i) => <Image key={"mana-" + i} style={{ "maxHeight": "20px" }} src={mana} />)}</div>;
                 } catch (e) {
                     console.log(e);
                     return errorText("Error");
@@ -351,21 +363,21 @@ function App() {
                     <Col lg={5}>
                         <h2>Instructions</h2>
                         <ul>
-                            <li>Import a CSV or scroll down to the <a href="#table">Table</a> to get started!</li>
-                            <li>Use the filters to help find the cards you want to add in the table. Use ctrl-click to select multiple. Use the "Tag" faction filter to include your Tags regardless of faction.</li>
-                            <li>Give your deck a name and save it as a CSV to edit it later or as a PNG to import it right into Tabletop Simulator!</li>
-                            <li>Import into TTS using Objects - Components - Cards - Custom Deck with Width 10, Height 6, and Back is Hidden.  Remember to select the correct Number (of cards) as well.</li>
+                            <li key="1">Import a CSV or scroll down to the <a href="#table">Table</a> to get started!</li>
+                            <li key="2">Use the filters to help find the cards you want to add in the table. Use ctrl-click to select multiple. Use the "Tag" faction filter to include your Tags regardless of faction.</li>
+                            <li key="3">Give your deck a name and save it as a CSV to edit it later or as a PNG to import it right into Tabletop Simulator!</li>
+                            <li key="4">Import into TTS using Objects - Components - Cards - Custom Deck with Width 10, Height 6, and Back is Hidden.  Remember to select the correct Number (of cards) as well.</li>
                         </ul>
                         <hr className="hr" />
                         <h2>Helpful Links</h2>
                         <ul>
-                            <li><a href="https://docs.google.com/document/d/1ugf1jPtwdqVR7T10WZrzN0rqWBDUZOmKxP2Rj-eh0O4/edit?usp=sharing" target="_blank">Game Rules</a></li>
-                            <li><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3252480722" target="_blank">Game Board</a></li>
-                            <li><a href={defaultCSV} target="_blank">CSV Template</a></li>
+                            <li key="1"><a href="https://docs.google.com/document/d/1ugf1jPtwdqVR7T10WZrzN0rqWBDUZOmKxP2Rj-eh0O4/edit?usp=sharing" target="_blank">Game Rules</a></li>
+                            <li key="2"><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3252480722" target="_blank">Game Board</a></li>
+                            <li key="3"><a href={defaultCSV} target="_blank">CSV Template</a></li>
                         </ul>
                         <hr className="hr" />
                         <h2>Import CSV</h2>
-                        <Stack direction="horizontal" gap={3} fluid>
+                        <Stack direction="horizontal" gap={3}>
                             <div className="px-1" >
                                 <Form.Control size="lg" name="file" type="file"
                                     onChange={function (e) {
@@ -390,19 +402,19 @@ function App() {
                                 <Col>
                                     <h4>Faction</h4>
                                     <Form.Select id="faction_list" multiple htmlSize={7} onClick={() => updateFilters(csv_data)}>
-                                        {faction_list.map((value) => (<option value={value}>{value}</option>))}
+                                        {faction_list.map((value, index) => (<option value={value} key={ index }>{value}</option>))}
                                     </Form.Select>
                                 </Col>
                                 <Col>
                                     <h4>Type</h4>
                                     <Form.Select id="type_list" multiple htmlSize={7} onClick={() => updateFilters(csv_data)}>
-                                        {type_list.map((value) => (<option value={value}>{value}</option>))}
+                                        {type_list.map((value, index) => (<option value={value} key={index}>{value}</option>))}
                                     </Form.Select>
                                 </Col>
                                 <Col>
                                     <h4>Tag</h4>
                                     <Form.Select id="tag_list" multiple htmlSize={7} onClick={() => updateFilters(csv_data)}>
-                                        {tag_list.map((value) => (<option value={value}>{value}</option>))}
+                                        {tag_list.map((value, index) => (<option value={value} key={index}>{value}</option>))}
                                     </Form.Select>
                                 </Col>
                             </Row>
@@ -420,11 +432,11 @@ function App() {
                         <h2>Preview</h2>
                         <Table size="sm">
                             <tbody>
-                                {Array.from(Array(6).keys()).map((_, row) => (
-                                    <tr>
-                                        {Array.from(Array(10).keys()).map((_, col) => (getImg(decklist[row * 10 + col]) != null) ?
+                                {Array.from(Array(6).keys()).map((index1, row) => (
+                                    <tr key={index1}>
+                                        {Array.from(Array(10).keys()).map((index2, col) => (getImg(decklist[row * 10 + col]) != null) ?
                                             (
-                                                <td>
+                                                <td key={index2}>
                                                     <Card
                                                         src={getImg(decklist[row * 10 + col])}
                                                         count={data_dict[decklist[row * 10 + col]][header_lookup["Count"]]}
@@ -436,7 +448,7 @@ function App() {
                                                 </td>
                                             )
                                             :
-                                            (<td><Image style={{ maxWidth: "100%" }} src={spacer} /></td>)
+                                            (<td key={index2}><Image style={{ maxWidth: "100%" }} src={spacer} /></td>)
                                         )}
                                     </tr>
                                 ))}
@@ -458,13 +470,12 @@ function App() {
                     <Table striped bordered hover >
                         <thead style={{ position: "sticky", top: "-1px" }}>
                             <tr >
-                                {headers.map((value, index) => (<th key={index}>{value.replace(/\s/g, String.fromCharCode(160))}</th>))}
+                                {headers.map((value, index) => (<th key={index }>{value.replace(/\s/g, String.fromCharCode(160))}</th>))}
                             </tr>
                         </thead>
                         <tbody>
-                            {filtered_csv_data.map((row_value, index) => (
-                                <tr>
-                                    {row_value.map((value, index2) => (<td key={index2}>{format_cell(value, index2, row_value)}</td>))}
+                            {filtered_csv_data.map((row_value, index) => (<tr key={ getID(row_value) + "\\:" + index }>
+                                    {row_value.map((value, index2) => (<td key={getID(row_value) + "_" + index2}>{format_cell(value, index2, row_value)}</td>))}
                                 </tr>
                             ))}
                         </tbody>
@@ -473,11 +484,11 @@ function App() {
                 <Tab title="Cards : Grid View" eventKey="card">
                     <Table size="sm">
                         <tbody>
-                            {Array.from(Array(Math.ceil(filtered_csv_data.length / 8)).keys()).map((_, row) => (
-                                <tr>
-                                    {Array.from(Array(8).keys()).map((_, col) => (getImg(getID(filtered_csv_data[row * 8 + col] ?? []) ?? "") != null) ?
+                            {Array.from(Array(Math.ceil(filtered_csv_data.length / 8)).keys()).map((index1, row) => (
+                                <tr key={ index1 }>
+                                    {Array.from(Array(8).keys()).map((index2, col) => (getImg(getID(filtered_csv_data[row * 8 + col] ?? []) ?? "") != null) ?
                                         (
-                                            <td>
+                                            <td key={index2 }>
                                                 <Card
                                                     src={getImg(getID(filtered_csv_data[row * 8 + col]))}
                                                     count={filtered_csv_data[row * 8 + col][header_lookup["Count"]]}
@@ -489,7 +500,7 @@ function App() {
                                             </td>
                                         )
                                         :
-                                        (<td><Image style={{ maxWidth: "100%" }} src={spacer} /></td>)
+                                        (<td key={index2}><Image style={{ maxWidth: "100%" }} src={spacer} /></td>)
                                     )}
                                 </tr>
                             ))}

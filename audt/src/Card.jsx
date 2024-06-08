@@ -9,7 +9,7 @@ import Popover from 'react-bootstrap/Popover';
 function CardComponent(props) {
     const [isHovered, setHover] = useState(false);
     const buttonStyle = {
-        "font-size": props.size == "sm" ? "1.5vh" : "3vh",
+        "fontSize": props.size == "sm" ? "1.5vh" : "3vh",
         "height": props.size == "sm" ? "3vh" : "6vh",
         "width": props.size == "sm" ? "3vh" : "6vh",
         "boxSizing": "border-box",
