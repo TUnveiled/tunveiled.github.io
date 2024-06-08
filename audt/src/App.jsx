@@ -13,6 +13,8 @@ import Form from 'react-bootstrap/Form';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 import Button from 'react-bootstrap/Button';
+import Tabs from 'react-bootstrap/Tabs';
+import Tab from 'react-bootstrap/Tab';
 import defaultCSV from '/AU_Card_Images/Card_Data.csv?url';
 import spacer from '/spacer.png?url';
 import mana from '/mana.png?url';
@@ -21,6 +23,7 @@ import target from '/target.png?url'
 import left from '/left.png?url'
 import right from '/right.png?url'
 import reactStringReplace from 'react-string-replace';
+import Card from '/src/Card.jsx'
 
 function App() {
     const [csv_data, setCsvData] = useState([[]]);
@@ -35,6 +38,10 @@ function App() {
     const [tag_list, setTagList] = useState([]);
     const [current_version, setCurrentVersion] = useState(true);
     const gallery = Object.values(import.meta.glob('/AU_Card_Images/*.png', { eager: true, query: '?url', import: 'default' }));
+    const getID = function (row, _header_lookup) {
+        _header_lookup = _header_lookup ?? header_lookup;
+        return row[_header_lookup["name"]];
+    }
     const getImageKey = function (url) {
         let filename = url.substring(url.lastIndexOf("/")+1);
         let start = filename.indexOf("_") + 1;
@@ -47,15 +54,16 @@ function App() {
             .normalize('NFD').replace(/[a-z][\u0300-\u036f]/g, '')]
             ;
     }
-    const getImgKeyHeaderIndex = function () { return header_lookup["name"] };
-
 
     // Controller Functions
     function updateCount(id, count) { // change the count associated with a specific card ID
         try {
-            let temp_csv_data = csv_data.map((row, index) => row.map((value, index2) => (row[0] == id && index2 == header_lookup["Count"]) ? count : value));
+            let temp_csv_data = csv_data.map((row, index) => row.map((value, index2) => (getID(row) == id && index2 == header_lookup["Count"]) ? count : value));
+            let temp_data_dict = data_dict;
+            temp_data_dict[id][header_lookup["Count"]] = count;
             setCsvData(temp_csv_data);
-            setFilteredCsvData(filtered_csv_data.map((row, index) => row.map((value, index2) => (row[0] == id && index2 == header_lookup["Count"]) ? count : value)));
+            setDataDict(temp_data_dict);
+            setFilteredCsvData(filtered_csv_data.map((row, index) => row.map((value, index2) => (getID(row) == id && index2 == header_lookup["Count"]) ? count : value)));
             updateDecklist(temp_csv_data);
         } catch (e) {
             console.log(e);
@@ -119,7 +127,7 @@ function App() {
             let temp_decklist = [];
             data.forEach((row) => {
                 for (let i = 0; i < row[1]; i++) {
-                    temp_decklist.push(row[getImgKeyHeaderIndex()]);
+                    temp_decklist.push(getID(row));
                 }
             });
             setDecklist(temp_decklist);
@@ -169,7 +177,7 @@ function App() {
                         tarr.push(data[j]);
                     }
                     lines.push(tarr);
-                    _data_dict[tarr[_header_lookup["name"]]] = tarr;
+                    _data_dict[getID(tarr, _header_lookup)] = tarr;
                 }
 
                 let _faction_list = [...new Set(lines.map((row) => row[_header_lookup["faction"]]))];
@@ -201,11 +209,11 @@ function App() {
                         tarr.push(new_data[j]);
                     } 
 
-                    _data_dict[tarr[_header_lookup["name"]]][_header_lookup["Count"]] = tarr[_header_lookup["Count"]];
+                    _data_dict[getID(tarr)][_header_lookup["Count"]] = tarr[_header_lookup["Count"]];
                 }
 
                 for (let i = 0; i < _csv_data.length; i++) {
-                    _csv_data[i] = _data_dict[_csv_data[i][header_lookup["name"]]];
+                    _csv_data[i] = _data_dict[getID(_csv_data[i])];
                 }
 
                 setDataDict(_data_dict);
@@ -228,20 +236,20 @@ function App() {
             case header_lookup["Count"]:
                 return (<Form.Control size="lg" style={{ "maxWidth": "100px", "padding": "20%" }} type="number"
                     min="0" max={(["Commander", "Structure"].includes(row[header_lookup["type"]])) ? 1 : 3}
-                    value={value} onChange={(e) => { updateCount(row[0], e.target.value) }} />);
+                    value={value} onChange={(e) => { updateCount(getID(row), e.target.value) }} />);
                 break;
             case header_lookup["name"]:
                 try {
                     return (
-                        <OverlayTrigger placement="auto" trigger={['hover', 'focus']} overlay={
-                            <Popover>
-                                <Popover.Body>
-                                    <Image style={{ maxWidth: "100%" }} src={getImg(row[getImgKeyHeaderIndex()])} />
-                                </Popover.Body>
-                            </Popover>
-                        }>
-                            <Container><Row><Col>{value}</Col></Row></Container>
-                        </OverlayTrigger>
+                            <OverlayTrigger placement="auto" trigger={['hover', 'focus']} overlay={
+                                <Popover>
+                                    <Popover.Body>
+                                        <Image style={{ maxWidth: "100%" }} src={getImg(getID(row))} />
+                                    </Popover.Body>
+                                </Popover>
+                            }>
+                                <Container><Row><Col>{value}</Col></Row></Container>
+                            </OverlayTrigger>
                     )
                 } catch (e) {
                     console.log(e);
@@ -416,15 +424,16 @@ function App() {
                                     <tr>
                                         {Array.from(Array(10).keys()).map((_, col) => (getImg(decklist[row * 10 + col]) != null) ?
                                             (
-                                                <td><OverlayTrigger hidden placement="auto" overlay={
-                                                    <Popover>
-                                                        <Popover.Body>
-                                                            <Image style={{ maxWidth: "100%" }} src={getImg(decklist[row * 10 + col])} />
-                                                        </Popover.Body>
-                                                    </Popover>
-                                                }>
-                                                    <Image style={{ maxWidth: "100%" }} src={getImg(decklist[row * 10 + col])} />
-                                                </OverlayTrigger></td>
+                                                <td>
+                                                    <Card
+                                                        src={getImg(decklist[row * 10 + col])}
+                                                        count={data_dict[decklist[row * 10 + col]][header_lookup["Count"]]}
+                                                        updateCount={updateCount}
+                                                        name={decklist[row * 10 + col]}
+                                                        max={(["Commander", "Structure"].includes(data_dict[decklist[row * 10 + col]][header_lookup["type"]])) ? 1 : 3}
+                                                        size="sm"
+                                                    />
+                                                </td>
                                             )
                                             :
                                             (<td><Image style={{ maxWidth: "100%" }} src={spacer} /></td>)
@@ -439,21 +448,55 @@ function App() {
             </Container>
 
             <hr className="hr" />
-            <h2 id="table">Table</h2>
-            <Table striped bordered hover >
-                <thead style={{ position: "sticky", top: "-1px" }}>
-                    <tr >
-                        {headers.map((value, index) => (<th key={index}>{value.replace(/\s/g, String.fromCharCode(160))}</th>))}
-                    </tr>
-                </thead>
-                <tbody>
-                    {filtered_csv_data.map((row_value, index) => (
-                        <tr>
-                            {row_value.map((value, index2) => (<td key={index2}>{format_cell(value, index2, row_value)}</td>))}
-                        </tr>
-                    ))}
-                </tbody>
-            </Table>
+            <Tabs
+                id="table"
+                defaultActiveKey="card"
+                className="mb-3"
+                justify
+            >
+                <Tab title="Cards : Table View" eventKey="table">
+                    <Table striped bordered hover >
+                        <thead style={{ position: "sticky", top: "-1px" }}>
+                            <tr >
+                                {headers.map((value, index) => (<th key={index}>{value.replace(/\s/g, String.fromCharCode(160))}</th>))}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {filtered_csv_data.map((row_value, index) => (
+                                <tr>
+                                    {row_value.map((value, index2) => (<td key={index2}>{format_cell(value, index2, row_value)}</td>))}
+                                </tr>
+                            ))}
+                        </tbody>
+                    </Table>
+                </Tab>
+                <Tab title="Cards : Grid View" eventKey="card">
+                    <Table size="sm">
+                        <tbody>
+                            {Array.from(Array(Math.ceil(filtered_csv_data.length / 8)).keys()).map((_, row) => (
+                                <tr>
+                                    {Array.from(Array(8).keys()).map((_, col) => (getImg(getID(filtered_csv_data[row * 8 + col] ?? []) ?? "") != null) ?
+                                        (
+                                            <td>
+                                                <Card
+                                                    src={getImg(getID(filtered_csv_data[row * 8 + col]))}
+                                                    count={filtered_csv_data[row * 8 + col][header_lookup["Count"]]}
+                                                    updateCount={updateCount}
+                                                    name={getID(filtered_csv_data[row * 8 + col])}
+                                                    max={(["Commander", "Structure"].includes(filtered_csv_data[row * 8 + col][header_lookup["type"]])) ? 1 : 3}
+                                                    size="lg"
+                                                />
+                                            </td>
+                                        )
+                                        :
+                                        (<td><Image style={{ maxWidth: "100%" }} src={spacer} /></td>)
+                                    )}
+                                </tr>
+                            ))}
+                        </tbody>
+                    </Table>
+                </Tab>
+            </Tabs>
         </>
     )
 }

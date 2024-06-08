@@ -34,3 +34,16 @@ td > div.numeric {
     text-align: center;
     width: 100%;
 }
+.imageContainer {
+    position: relative;
+}
+
+.imageContainer > div > div > button {
+    font-weight: bold;
+    border-radius: 1vh;
+}
+
+button.nav-link {
+    font-size: 3vh;
+    font-weight: bold;
+}
