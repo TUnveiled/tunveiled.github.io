@@ -38,6 +38,7 @@ function App() {
     const [tag_list, setTagList] = useState([]);
     const [current_version, setCurrentVersion] = useState(true);
     const gallery = Object.values(import.meta.glob('/AU_Card_Images/*.png', { eager: true, query: '?url', import: 'default' }));
+    const inline_images = { "mana": mana, "gold": gold, "left": left, "right": right, "target": target };
     const consoleError = console.error;
     const SUPPRESSED_WARNINGS = ['Each child in a list should have a unique "key" prop', 'trigger limits the visibility of the overlay to just mouse users.'];
     console.error = function filterWarnings(msg, ...args) {
@@ -274,11 +275,10 @@ function App() {
                     if (value.charAt(0) === '"')
                         value = value.substring(1, value.length - 1);
                     value = value.replace(/<br\s*[\/]?>/gi, "\n");
-                    value = reactStringReplace(value, '<<!mana>>', (match, i) => (<Image style={{ "maxHeight": "20px" }} src={mana} />));
-                    value = reactStringReplace(value, '<<!gold>>', (match, i) => (<Image style={{ "maxHeight": "20px" }} src={gold} />));
-                    value = reactStringReplace(value, '<<!target>>', (match, i) => (<Image style={{ "maxHeight": "20px" }} src={target} />));
-                    value = reactStringReplace(value, '<<!right>>', (match, i) => (<Image style={{ "maxHeight": "20px" }} src={right} />));
-                    value = reactStringReplace(value, '<<!left>>', (match, i) => (<Image style={{ "maxHeight": "20px" }} src={left} />));
+                    for (const [key, url] of Object.entries(inline_images)) {
+                        value = reactStringReplace(value, new RegExp(`(<<!*${key}>>)`),
+                            (match, i) => (<Image style={{ "maxHeight": "20px" }} src={url} />));
+                    }
                     value = reactStringReplace(value, /<b>(.*?)<\/b>/g, (match, i) => (<strong>{match}</strong>));
                     return value;
                 } catch (e) {
@@ -467,29 +467,14 @@ function App() {
                 className="mb-3"
                 justify
             >
-                <Tab title="Cards : Table View" eventKey="table">
-                    <Table striped bordered hover >
-                        <thead style={{ position: "sticky", top: "-1px" }}>
-                            <tr >
-                                {headers.map((value, index) => (<th key={index }>{value.replace(/\s/g, String.fromCharCode(160))}</th>))}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {filtered_csv_data.map((row_value, index) => (<tr key={ getID(row_value) + "\\:" + index }>
-                                    {row_value.map((value, index2) => (<td key={getID(row_value) + "_" + index2}>{format_cell(value, index2, row_value)}</td>))}
-                                </tr>
-                            ))}
-                        </tbody>
-                    </Table>
-                </Tab>
                 <Tab title="Cards : Grid View" eventKey="card">
                     <Table size="sm">
                         <tbody>
                             {Array.from(Array(Math.ceil(filtered_csv_data.length / 8)).keys()).map((index1, row) => (
-                                <tr key={ index1 }>
+                                <tr key={index1}>
                                     {Array.from(Array(8).keys()).map((index2, col) => (getImg(getID(filtered_csv_data[row * 8 + col] ?? []) ?? "") != null) ?
                                         (
-                                            <td key={index2 }>
+                                            <td key={index2}>
                                                 <Card
                                                     src={getImg(getID(filtered_csv_data[row * 8 + col]))}
                                                     count={filtered_csv_data[row * 8 + col][header_lookup["Count"]]}
@@ -503,6 +488,21 @@ function App() {
                                         :
                                         (<td key={index2}><Image style={{ maxWidth: "100%" }} src={spacer} /></td>)
                                     )}
+                                </tr>
+                            ))}
+                        </tbody>
+                    </Table>
+                </Tab>
+                <Tab title="Cards : Table View" eventKey="table">
+                    <Table striped bordered hover >
+                        <thead style={{ position: "sticky", top: "-1px" }}>
+                            <tr >
+                                {headers.map((value, index) => (<th key={index }>{value.replace(/\s/g, String.fromCharCode(160))}</th>))}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {filtered_csv_data.map((row_value, index) => (<tr key={ getID(row_value) + "\\:" + index }>
+                                    {row_value.map((value, index2) => (<td key={getID(row_value) + "_" + index2}>{format_cell(value, index2, row_value)}</td>))}
                                 </tr>
                             ))}
                         </tbody>

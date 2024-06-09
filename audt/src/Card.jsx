@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Image from 'react-bootstrap/Image';
-import Badge from 'react-bootstrap/Badge';
 import Stack from 'react-bootstrap/Stack';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
@@ -36,39 +35,34 @@ function CardComponent(props) {
     </Button>);
     return (
         <div className="imageContainer">
-            <OverlayTrigger hidden placement="auto" trigger={ mouse_connected ? "hover" : "focus" }
+            <OverlayTrigger hidden placement="auto" trigger={mouse_connected ? "hover" : "focus"}
                 onToggle={(nextShow) => setHover(nextShow)}
-                overlay={ (props.size == "sm") ? (
-                <Popover>
-                    <Popover.Body>
-                        <Image style={{ maxWidth: "100%" }} src={props.src} />
-
-                    </Popover.Body>
+                overlay={(props.size == "sm") ? (
+                    <Popover>
+                        <Popover.Body>
+                            <Image style={{ maxWidth: "100%" }} src={props.src} />
+                        </Popover.Body>
                     </Popover>
                 ) : <></>
-            }>
+                }>
                 <div>
                     <Image style={{ maxWidth: "100%" }} src={props.src} />
                     <Stack direction="horizontal" gap={0} style={menu_style}>
-                        <Button 
+                        <Button
                             size={props.size}
                             style={buttonStyle}
                             variant="danger"
                             onClick={() => props.updateCount(props.name, parseInt(props.count) - 1)}
-                            disabled={props.count <= 0 }
-                        >
-                            -
-                        </Button>
+                            disabled={props.count <= 0}
+                        >-</Button>
                         {countComponent}
-                        <Button 
+                        <Button
                             size={props.size}
                             style={buttonStyle}
                             variant="success"
                             onClick={() => props.updateCount(props.name, parseInt(props.count) + 1)}
                             disabled={props.count >= props.max}
-                        >
-                            +
-                        </Button>
+                        >+</Button>
                     </Stack>
                 </div>
             </OverlayTrigger>
