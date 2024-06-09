@@ -39,9 +39,9 @@ function App() {
     const [current_version, setCurrentVersion] = useState(true);
     const gallery = Object.values(import.meta.glob('/AU_Card_Images/*.png', { eager: true, query: '?url', import: 'default' }));
     const consoleError = console.error;
-    const SUPPRESSED_WARNINGS = ['Each child in a list should have a unique "key" prop'];
+    const SUPPRESSED_WARNINGS = ['Each child in a list should have a unique "key" prop', 'trigger limits the visibility of the overlay to just mouse users.'];
     console.error = function filterWarnings(msg, ...args) {
-        if (!SUPPRESSED_WARNINGS.some((entry) => msg.includes(entry))) {
+        if (!SUPPRESSED_WARNINGS.some((entry) => msg.includes(entry)) && !SUPPRESSED_WARNINGS.some((entry) => args.some((arg) => arg.includes != null && arg.includes(entry)))) {
             consoleError(msg, ...args);
         }
     };

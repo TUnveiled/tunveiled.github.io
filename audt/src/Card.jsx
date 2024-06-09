@@ -8,16 +8,18 @@ import Popover from 'react-bootstrap/Popover';
 
 function CardComponent(props) {
     const [isHovered, setHover] = useState(false);
+    let mouse_connected = matchMedia('(pointer:fine)').matches;
     const buttonStyle = {
         "fontSize": props.size == "sm" ? "1.5vh" : "3vh",
         "height": props.size == "sm" ? "3vh" : "6vh",
         "width": props.size == "sm" ? "3vh" : "6vh",
         "boxSizing": "border-box",
-        padding: 0
+        padding: 0,
+        display: isHovered || !mouse_connected ? "inline-block" : "none"
     };
     let count_style = { ...buttonStyle };
-    count_style[""]
     count_style["cursor"] = "default";
+    count_style["display"] = !mouse_connected || isHovered || props.count > 0 && props.size == "lg" ? "inline-block" : "none";
     let menu_style = {
         width: "100%",
         position: "absolute",
@@ -34,7 +36,7 @@ function CardComponent(props) {
     </Button>);
     return (
         <div className="imageContainer">
-            <OverlayTrigger hidden placement="auto"
+            <OverlayTrigger hidden placement="auto" trigger={ mouse_connected ? "hover" : "focus" }
                 onToggle={(nextShow) => setHover(nextShow)}
                 overlay={ (props.size == "sm") ? (
                 <Popover>
@@ -47,12 +49,12 @@ function CardComponent(props) {
             }>
                 <div>
                     <Image style={{ maxWidth: "100%" }} src={props.src} />
-                    {isHovered && (<Stack direction="horizontal" gap={0} style={menu_style}>
+                    <Stack direction="horizontal" gap={0} style={menu_style}>
                         <Button 
                             size={props.size}
                             style={buttonStyle}
                             variant="danger"
-                            onClick={() => props.updateCount(props.name, props.count - 1)}
+                            onClick={() => props.updateCount(props.name, parseInt(props.count) - 1)}
                             disabled={props.count <= 0 }
                         >
                             -
@@ -67,8 +69,7 @@ function CardComponent(props) {
                         >
                             +
                         </Button>
-                    </Stack>)}
-                    {!isHovered && props.count > 0 && props.size == "lg" && (<Stack style={menu_style}>{countComponent}</Stack>)}
+                    </Stack>
                 </div>
             </OverlayTrigger>
         </div>
