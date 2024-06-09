@@ -129,11 +129,12 @@ function App() {
         }
 
     }
-    function updateDecklist(data) { // Create the decklist array
+    function updateDecklist(data, _header_lookup) { // Create the decklist array
         try {
+            _header_lookup = _header_lookup ?? header_lookup;
             let temp_decklist = [];
             data.forEach((row) => {
-                for (let i = 0; i < row[header_lookup["Count"]]; i++) {
+                for (let i = 0; i < row[_header_lookup["Count"]]; i++) {
                     temp_decklist.push(getID(row));
                 }
             });
@@ -204,7 +205,7 @@ function App() {
                 setTagList(_tag_list);
                 setCsvData(lines);
                 updateFilters(lines);
-                updateDecklist(lines);
+                updateDecklist(lines, _header_lookup);
             } else {
                 let _csv_data = csv_data;
                 let _header_lookup = header_lookup;
