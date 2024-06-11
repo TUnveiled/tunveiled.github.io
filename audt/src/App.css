@@ -1,12 +1,5 @@
 .popover {
     max-width: 350px;
-    width: 350px;
-}
-.tooltip-inner.show {
-    opacity: 100%;
-}
-.tooltip.show {
-    opacity: 100%;
 }
 
 table {
@@ -46,4 +39,33 @@ td > div.numeric {
 button.nav-link {
     font-size: 3vh;
     font-weight: bold;
+}
+
+.togglebtn:hover:not(.active) {
+    color: var(--bs-btn-color);
+    background-color: var(--bs-btn-bg);
+    border-color: var(--bs-btn-border-color);
+}
+
+.linkbtn {
+    width: 100%;
+}
+
+.filterContainer > div > div {
+    display: flex;
+    flex-flow: column wrap; 
+    align-content: stretch;
+}
+
+.btn {
+    font-weight: bolder;
+}
+
+#preview_table {
+    border-spacing: 0px;
+}
+
+#preview_table > tbody > tr > td {
+    padding: 0px;
+    border-bottom-width: 0;
 }

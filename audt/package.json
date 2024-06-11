@@ -2,7 +2,7 @@
   "name": "audt",
   "private": false,
   "homepage": "http://tunveiled.github.io/",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "type": "module",
   "scripts": {
     "predeploy": "npm run build",

@@ -10,6 +10,7 @@ import Image from 'react-bootstrap/Image';
 import Stack from 'react-bootstrap/Stack';
 import Table from 'react-bootstrap/Table';
 import Form from 'react-bootstrap/Form';
+import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 import Button from 'react-bootstrap/Button';
@@ -24,6 +25,8 @@ import left from '/left.png?url'
 import right from '/right.png?url'
 import reactStringReplace from 'react-string-replace';
 import Card from '/src/Card.jsx'
+import TooltipShell from '/src/TooltipShell.jsx'
+import FlexFilter from './FlexFilter';
 
 function App() {
     const [csv_data, setCsvData] = useState([[]]);
@@ -36,11 +39,14 @@ function App() {
     const [faction_list, setFactionList] = useState([]);
     const [type_list, setTypeList] = useState([]);
     const [tag_list, setTagList] = useState([]);
+    const [selected_factions, setSelectedFactions] = useState([]);
+    const [selected_types, setSelectedTypes] = useState([]);
+    const [selected_tags, setSelectedTags] = useState([]);
     const [current_version, setCurrentVersion] = useState(true);
     const gallery = Object.values(import.meta.glob('/AU_Card_Images/*.png', { eager: true, query: '?url', import: 'default' }));
     const inline_images = { "mana": mana, "gold": gold, "left": left, "right": right, "target": target };
-    const consoleError = console.error;
     const SUPPRESSED_WARNINGS = ['Each child in a list should have a unique "key" prop', 'trigger limits the visibility of the overlay to just mouse users.'];
+    const consoleError = console.error;
     console.error = function filterWarnings(msg, ...args) {
         if (!SUPPRESSED_WARNINGS.some((entry) => msg.includes(entry)) && !SUPPRESSED_WARNINGS.some((entry) => args.some((arg) => arg.includes != null && arg.includes(entry)))) {
             consoleError(msg, ...args);
@@ -50,17 +56,17 @@ function App() {
         _header_lookup = _header_lookup ?? header_lookup;
         return row[_header_lookup["name"]];
     }
-    const getImageKey = function (url) {
-        let filename = url.substring(url.lastIndexOf("/")+1);
+    const getIDFromImg = function (src) {
+        let filename = src.substring(src.lastIndexOf("/")+1);
         let start = filename.indexOf("_") + 1;
         let end = start + filename.substring(start + 1).indexOf("_")+1;
-        return decodeURI(filename.substring(start, end)).replace(" ", String.fromCharCode(160));
+        return decodeURI(filename.substring(start, end));
     }
-    const getImg = function (key) {
-        return img_dict[(key ?? "")
-            .replace(/[\(\)']/g, "")
-            .normalize('NFD').replace(/[a-z][\u0300-\u036f]/g, '')]
-            ;
+    const getImg = function (id) {
+        return img_dict[(id ?? "")
+            .replace(/[\(\)']/g, "") // remove parentheses
+            .normalize('NFD').replace(/[a-z][\u0300-\u036f]/g, '') // remove accented letters
+        ];
     }
 
     // Controller Functions
@@ -136,7 +142,7 @@ function App() {
             let temp_decklist = [];
             data.forEach((row) => {
                 for (let i = 0; i < row[_header_lookup["Count"]]; i++) {
-                    temp_decklist.push(getID(row));
+                    temp_decklist.push(getID(row, _header_lookup));
                 }
             });
             setDecklist(temp_decklist);
@@ -147,15 +153,13 @@ function App() {
     }
     function updateFilters(_data) { // Filter the list
         try {
-            let faction_list = $('#faction_list').val();
-            let type_list = $('#type_list').val();
-            let tag_list = $('#tag_list').val();
-            if (_data === null) _data = csv_data;
+            if (_data === null || _data === undefined) _data = csv_data;
+            if (_data === undefined) return;
             setFilteredCsvData(_data.filter((row) => {
-                let type_match = (type_list == undefined || type_list.includes(row[header_lookup["type"]]) || type_list.length == 0);
-                let faction_match = (faction_list == undefined || faction_list.includes(row[header_lookup["faction"]]) || faction_list.length == 0);
-                let tag_match = (tag_list == undefined || tag_list.length == 0 || Object.keys(header_lookup).filter(header => header.includes("tag")).some(header => tag_list.includes(row[header_lookup[header]])));
-                let tag_exception = (faction_list.includes("Tag") && row[header_lookup["faction"]] != "Tag" && tag_list != undefined && tag_list.length > 0)
+                let type_match = (selected_types == undefined || selected_types.includes(row[header_lookup["type"]]) || selected_types.length == 0);
+                let faction_match = (selected_factions == undefined || selected_factions.includes(row[header_lookup["faction"]]) || selected_factions.length == 0);
+                let tag_match = (selected_tags == undefined || selected_tags.length == 0 || Object.keys(header_lookup).filter(header => header.includes("tag")).some(header => selected_tags.includes(row[header_lookup[header]])));
+                let tag_exception = (selected_factions.includes("Tag") && row[header_lookup["faction"]] != "Tag" && selected_tags != undefined && selected_tags.length > 0)
 
                 return type_match && ((faction_match && tag_match) || (tag_exception && (faction_match || tag_match)));
 
@@ -171,22 +175,19 @@ function App() {
             var allTextLines = data.split(/\r\n|\n/);
             let id_included = allTextLines[0].includes("ID");
             let _headers = (id_included ? [] : ["ID"]).concat(allTextLines[0].split(','));
+            let _header_lookup = Object.fromEntries(Object.entries(_headers).map(([key, value]) => [value, parseInt(key)]));
             let _data_dict = data_dict;
 
             if (Object.keys(header_lookup).length === 0 || !current_version) {
-                let _header_lookup = Object.fromEntries(Object.entries(_headers).map(([key, value]) => [value, parseInt(key)]));
                 var lines = [];
                 // Create each row array
                 for (var i = 1; i < allTextLines.length; i++) {
                     var data = allTextLines[i].match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
-                    if (data == null || data.length < 3) continue; // handle bad data
+                    if (data == null || data.length < 2) continue; // handle bad data
                     var tarr = [];
                     if (!id_included)
                         tarr.push(i - 1);
                     for (var j = 0; j < _headers.length - (id_included ? 0 : 1); j++) {
-                        if (j === _header_lookup["name"] - (id_included ? 0 : 1)) {
-                            data[j] = data[j].replace(/\s/g, String.fromCharCode(160));
-                        }
                         tarr.push(data[j]);
                     }
                     lines.push(tarr);
@@ -196,7 +197,7 @@ function App() {
                 let _faction_list = [...new Set(lines.map((row) => row[_header_lookup["faction"]]))];
                 let _type_list = [...new Set(lines.map((row) => row[_header_lookup["type"]]))];
                 let _tag_list = [...new Set([].concat(Object.keys(_header_lookup).filter(header => header.includes("tag"))
-                    .map(header => lines.map((row) => row[_header_lookup[header]]))).flat().filter(a => a != null))];
+                    .map(header => lines.map((row) => row[_header_lookup[header]]))).flat().filter(a => a != null))].sort();
 
                 setHeaders(_headers);
                 setHeaderLookup(_header_lookup);
@@ -209,21 +210,19 @@ function App() {
                 updateDecklist(lines, _header_lookup);
             } else {
                 let _csv_data = csv_data;
-                let _header_lookup = header_lookup;
 
                 // Create each row array
                 for (var i = 1; i < allTextLines.length; i++) {
                     var new_data = allTextLines[i].match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
-                    if (new_data == null || new_data.length < 3) continue; // handle bad data
+                    if (new_data == null || new_data.length < 2) continue; // handle bad data
                     var tarr = [];
                     if (!id_included)
                         tarr.push(i - 1);
                     for (var j = 0; j < _headers.length - 1; j++) {
-                        if (j === _header_lookup["name"]) new_data[j] = new_data[j].replace(/\s/g, String.fromCharCode(160));
-                        tarr.push(new_data[j]);
+                        tarr.push((new_data[j] ?? "").replace(/(\s)/g, " "));
                     } 
-
-                    _data_dict[getID(tarr)][_header_lookup["Count"]] = tarr[_header_lookup["Count"]];
+                    if (_data_dict[getID(tarr, _header_lookup)])
+                        _data_dict[getID(tarr, _header_lookup)][header_lookup["Count"]] = tarr[_header_lookup["Count"]];
                 }
 
                 for (let i = 0; i < _csv_data.length; i++) {
@@ -262,7 +261,7 @@ function App() {
                                     </Popover.Body>
                                 </Popover>
                             }>
-                                <Container><Row><Col>{value}</Col></Row></Container>
+                            <Container><Row><Col>{value.replace(/\s/g, String.fromCharCode(160))}</Col></Row></Container>
                             </OverlayTrigger>
                     )
                 } catch (e) {
@@ -339,7 +338,7 @@ function App() {
             // load images
             let temp_img_dict = {};
             gallery.forEach((url) => {
-                temp_img_dict[getImageKey(url)] = url;
+                temp_img_dict[getIDFromImg(url)] = url;
             })
             setImgDict(temp_img_dict);
 
@@ -350,8 +349,11 @@ function App() {
                 dataType: "text",
                 success: load_csv
             });
+            
         }
     }, []);
+
+    useEffect(updateFilters, [selected_factions, selected_types, selected_tags])
 
     return (
         <>
@@ -364,74 +366,127 @@ function App() {
                     <Col lg={5}>
                         <h2>Instructions</h2>
                         <ul>
-                            <li key="1">Import a CSV or scroll down to the <a href="#table">Table</a> to get started!</li>
-                            <li key="2">Use the filters to help find the cards you want to add in the table. Use ctrl-click to select multiple. Use the "Tag" faction filter to include your Tags regardless of faction.</li>
+                            <li key="1">Import a CSV or <a href="#table">scroll down to the table</a> to get started!</li>
+                            <li key="2">Use the filters to help find the cards you want to add in the table. Hover over the filter titles for details.</li>
                             <li key="3">Give your deck a name and save it as a CSV to edit it later or as a PNG to import it right into Tabletop Simulator!</li>
                             <li key="4">Import into TTS using Objects - Components - Cards - Custom Deck with Width 10, Height 6, and Back is Hidden.  Remember to select the correct Number (of cards) as well.</li>
                         </ul>
+
                         <hr className="hr" />
+
                         <h2>Helpful Links</h2>
-                        <ul>
-                            <li key="1"><a href="https://docs.google.com/document/d/1ugf1jPtwdqVR7T10WZrzN0rqWBDUZOmKxP2Rj-eh0O4/edit?usp=sharing" target="_blank">Game Rules</a></li>
-                            <li key="2"><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3252480722" target="_blank">Game Board</a></li>
-                            <li key="3"><a href={defaultCSV} target="_blank">CSV Template</a></li>
-                        </ul>
+                        <Container>
+                            <Row>
+                                <Col>
+                                    <Button variant="outline-info" className="linkbtn" size="lg" href="https://docs.google.com/document/d/1ugf1jPtwdqVR7T10WZrzN0rqWBDUZOmKxP2Rj-eh0O4/edit?usp=sharing" target="_blank">Game Rules</Button>
+                                </Col>
+                                <Col>
+                                    <Button variant="outline-info" className="linkbtn" size="lg" href="https://steamcommunity.com/sharedfiles/filedetails/?id=3252480722" target="_blank">Game Board</Button>
+                                </Col>
+                                <Col>
+                                    <Button variant="outline-info" className="linkbtn" size="lg" href={defaultCSV}>CSV Template</Button>
+                                </Col>
+                            </Row>
+                        </Container>
+
                         <hr className="hr" />
-                        <h2>Import CSV</h2>
-                        <Stack direction="horizontal" gap={3}>
-                            <div className="px-1" >
-                                <Form.Control size="lg" name="file" type="file"
+
+                        <h2>Load CSV</h2>
+                        <Stack direction="horizontal" gap={1}>
+                            <div className="px-1" style={{ width: "100%" }}>
+                                <Button variant="outline-primary" as="label" size="lg" style={{ width: "100%", height: "100%" }}>Choose&nbsp;File...
+                                <Form.Control size="lg" name="file" type="file" style={{ display: "none" }} accept=".csv"
                                     onChange={function (e) {
                                         let _file = e.target.files[0];
                                         let _form = e.target;
                                         const reader = new FileReader();
-                                        reader.onload = (e2) => { load_csv(e2.target.result); _form.value = null;};
+                                        reader.onload = (e2) => {
+                                            load_csv(e2.target.result);
+                                            $("#filename").val(_file.name.substring(0, _file.name.lastIndexOf(".")));
+                                            _form.value = null;
+                                        };
                                         reader.readAsText(_file);
                                     }}
                                 />
+                            </Button>
+                                
                             </div>
-                            <div className="px-1 me-auto">
-                                <Form.Check size="lg" name="checkBox" type="checkbox" label="Update Counts Only" checked={current_version}
-                                    onChange={(e) => { setCurrentVersion(e.target.checked); }} />
+
+                            <div className="vr" />
+
+                            <div className="px-1">
+                                <OverlayTrigger placement="right" overlay={
+                                    (<Popover>
+                                        <Popover.Header>Modify Card Details</Popover.Header>
+                                        <Popover.Body>Keep this dark to update your deck to the latest version of AU!</Popover.Body>
+                                    </Popover>)}
+                                >
+                                    <Button as="label" size="lg" variant="outline-warning" className="togglebtn" active={!current_version}>Modify&nbsp;Card&nbsp;Details
+                                        <Form.Check size="lg" name="checkBox" type="checkbox" checked={!current_version} style={{display: "none"} }
+                                            onChange={(e) => { setCurrentVersion(!e.target.checked); }} />
+                                    </Button>
+                                    
+                                </OverlayTrigger>
                             </div>
                         </Stack>
                         
                         <hr className="hr" />
-                        <h2>Filters</h2>
-                        <Container fluid>
+                        <TooltipShell placement="top-start" header="Filters"
+                            body={(<>Use these to find cards that meet certain criteria.</>)}
+                            content={(<h2>Filters</h2>)}
+                        />
+                        <Container fluid className="filterContainer">
                             <Row>
                                 <Col>
-                                    <h4>Faction</h4>
-                                    <Form.Select id="faction_list" multiple htmlSize={7} onClick={() => updateFilters(csv_data)}>
-                                        {faction_list.map((value, index) => (<option value={value} key={ index }>{value}</option>))}
-                                    </Form.Select>
+                                    <TooltipShell placement="top" header="Factions"
+                                        body={(<ul>
+                                            <li>A deck can have up to two factions/tags.</li>
+                                            <li>You can play any card that matches one of your factions/tags.</li>
+                                            <li>Cards labelled "General" can be played in any deck.</li>
+                                            <li>Cards labelled "Tag" can only be played if it matches one of your deck's tags.</li>
+                                        </ul>)}
+                                        content={(<h4>Faction</h4>)}
+                                    />
+                                    <FlexFilter option_list={faction_list} selected_options={selected_factions} set_selected_options={setSelectedFactions} />
+
                                 </Col>
                                 <Col>
-                                    <h4>Type</h4>
-                                    <Form.Select id="type_list" multiple htmlSize={7} onClick={() => updateFilters(csv_data)}>
-                                        {type_list.map((value, index) => (<option value={value} key={index}>{value}</option>))}
-                                    </Form.Select>
+                                    <TooltipShell placement="top" header="Card Types"
+                                        body={(<>A deck has exactly 40 units/spells, 6 structures, and 3 commanders (unless a card states otherwise; e.g. Rule of Law).</>)}
+                                        content={(<h4>Type</h4>)}
+                                    />
+                                    <FlexFilter option_list={type_list} selected_options={selected_types} set_selected_options={setSelectedTypes} />
                                 </Col>
                                 <Col>
-                                    <h4>Tag</h4>
-                                    <Form.Select id="tag_list" multiple htmlSize={7} onClick={() => updateFilters(csv_data)}>
-                                        {tag_list.map((value, index) => (<option value={value} key={index}>{value}</option>))}
-                                    </Form.Select>
+                                    <TooltipShell placement="top" header="Tags"
+                                        body={(<ul>
+                                            <li>A deck can have up to two factions/tags.</li>
+                                            <li>You can play any card that matches one of your factions/tags.</li>
+                                        </ul>)}
+                                        content={(<h4>Tag</h4>)}
+                                    />
+                                    <FlexFilter option_list={tag_list} selected_options={selected_tags} set_selected_options={setSelectedTags} />
                                 </Col>
                             </Row>
                         </Container>
+
                         <hr className="hr" />
+
                         <h2>Downloads</h2>
-                        <Stack direction="horizontal" gap={0}>
-                            <Form.Control placeholder="File Name" id="filename" size="lg" type="text"></Form.Control>
-                            <div className="px-1"><Button onClick={downloadCSV}>CSV&nbsp;Export</Button></div>
-                            <div className="px-1"><Button onClick={downloadImage}>PNG&nbsp;Export</Button></div>
+                        <Stack direction="horizontal" gap={2}>
+                            <FloatingLabel label="File Name" style={{width: "100%"} }>
+                                <Form.Control placeholder="File Name" id="filename" size="lg" type="text" />
+                            </FloatingLabel>
+                            <div className="vr"></div>
+                            <Button variant="outline-primary" size="lg" onClick={downloadCSV}>Save&nbsp;As&nbsp;CSV</Button>
+                            <div className="vr"></div>
+                            <Button variant="outline-secondary" size="lg" onClick={downloadImage}>PNG&nbsp;Export</Button>
                         </Stack>
 
                     </Col>
                     <Col lg={7}>
                         <h2>Preview</h2>
-                        <Table size="sm">
+                        <Table size="sm" id="preview_table">
                             <tbody>
                                 {Array.from(Array(6).keys()).map((index1, row) => (
                                     <tr key={index1}>
