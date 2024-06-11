@@ -14,6 +14,7 @@ import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 import Button from 'react-bootstrap/Button';
+import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
 import defaultCSV from '/AU_Card_Images/Card_Data.csv?url';
@@ -261,7 +262,7 @@ function App() {
                                     </Popover.Body>
                                 </Popover>
                             }>
-                            <Container><Row><Col>{value.replace(/\s/g, String.fromCharCode(160))}</Col></Row></Container>
+                            <div style={{ height: "100%", display: "flex", alignItems: "center" }}>{value.replace(/\s/g, String.fromCharCode(160))}</div>
                             </OverlayTrigger>
                     )
                 } catch (e) {
@@ -361,7 +362,7 @@ function App() {
                 <h1>AU Deckbuilder</h1>
                 <hr className="hr" />
             </div>
-            <Container fluid>
+            <Container className="outerContainer" fluid>
                 <Row>
                     <Col lg={5}>
                         <h2>Instructions</h2>
@@ -375,7 +376,7 @@ function App() {
                         <hr className="hr" />
 
                         <h2>Helpful Links</h2>
-                        <Container>
+                        <Container fluid>
                             <Row>
                                 <Col>
                                     <Button variant="outline-info" className="linkbtn" size="lg" href="https://docs.google.com/document/d/1ugf1jPtwdqVR7T10WZrzN0rqWBDUZOmKxP2Rj-eh0O4/edit?usp=sharing" target="_blank">Game Rules</Button>
@@ -415,18 +416,13 @@ function App() {
                             <div className="vr" />
 
                             <div className="px-1">
-                                <OverlayTrigger placement="right" overlay={
-                                    (<Popover>
-                                        <Popover.Header>Modify Card Details</Popover.Header>
-                                        <Popover.Body>Keep this dark to update your deck to the latest version of AU!</Popover.Body>
-                                    </Popover>)}
-                                >
-                                    <Button as="label" size="lg" variant="outline-warning" className="togglebtn" active={!current_version}>Modify&nbsp;Card&nbsp;Details
-                                        <Form.Check size="lg" name="checkBox" type="checkbox" checked={!current_version} style={{display: "none"} }
+                                <TooltipShell placement="auto" header="Modify Card Details"
+                                    body={(<>Keep this dark to update your deck to the latest version of AU!</>)}
+                                    content={(<Button as="label" size="lg" variant="outline-warning" className="togglebtn" active={!current_version}>Modify&nbsp;Card&nbsp;Details
+                                        <Form.Check size="lg" name="checkBox" type="checkbox" checked={!current_version} style={{ display: "none" }}
                                             onChange={(e) => { setCurrentVersion(!e.target.checked); }} />
-                                    </Button>
-                                    
-                                </OverlayTrigger>
+                                    </Button>)}
+                                />
                             </div>
                         </Stack>
                         
@@ -445,7 +441,7 @@ function App() {
                                             <li>Cards labelled "General" can be played in any deck.</li>
                                             <li>Cards labelled "Tag" can only be played if it matches one of your deck's tags.</li>
                                         </ul>)}
-                                        content={(<h4>Faction</h4>)}
+                                        content={(<Button className="headerbtn" size="lg" variant="outline-light">Faction</Button>)}
                                     />
                                     <FlexFilter option_list={faction_list} selected_options={selected_factions} set_selected_options={setSelectedFactions} />
 
@@ -453,7 +449,7 @@ function App() {
                                 <Col>
                                     <TooltipShell placement="top" header="Card Types"
                                         body={(<>A deck has exactly 40 units/spells, 6 structures, and 3 commanders (unless a card states otherwise; e.g. Rule of Law).</>)}
-                                        content={(<h4>Type</h4>)}
+                                        content={(<Button className="headerbtn" size="lg" variant="outline-light">Type</Button>)}
                                     />
                                     <FlexFilter option_list={type_list} selected_options={selected_types} set_selected_options={setSelectedTypes} />
                                 </Col>
@@ -463,7 +459,7 @@ function App() {
                                             <li>A deck can have up to two factions/tags.</li>
                                             <li>You can play any card that matches one of your factions/tags.</li>
                                         </ul>)}
-                                        content={(<h4>Tag</h4>)}
+                                        content={(<Button className="headerbtn" size="lg" variant="outline-light">Tag</Button>)}
                                     />
                                     <FlexFilter option_list={tag_list} selected_options={selected_tags} set_selected_options={setSelectedTags} />
                                 </Col>
@@ -473,15 +469,15 @@ function App() {
                         <hr className="hr" />
 
                         <h2>Downloads</h2>
-                        <Stack direction="horizontal" gap={2}>
+                        <ButtonGroup style={{width: "100%"} }>
                             <FloatingLabel label="File Name" style={{width: "100%"} }>
                                 <Form.Control placeholder="File Name" id="filename" size="lg" type="text" />
                             </FloatingLabel>
                             <div className="vr"></div>
-                            <Button variant="outline-primary" size="lg" onClick={downloadCSV}>Save&nbsp;As&nbsp;CSV</Button>
+                            <Button style={ {alignSelf: "stretch"} } variant="outline-primary" size="lg" onClick={downloadCSV}>Save&nbsp;As&nbsp;CSV</Button>
                             <div className="vr"></div>
-                            <Button variant="outline-secondary" size="lg" onClick={downloadImage}>PNG&nbsp;Export</Button>
-                        </Stack>
+                            <Button style={{ alignSelf: "stretch" }} variant="outline-primary" size="lg" onClick={downloadImage}>PNG&nbsp;Export</Button>
+                        </ButtonGroup>
 
                     </Col>
                     <Col lg={7}>

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
+import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Image from 'react-bootstrap/Image';
 import Stack from 'react-bootstrap/Stack';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
@@ -14,25 +15,24 @@ function CardComponent(props) {
         "width": props.size == "sm" ? "3vh" : "6vh",
         "boxSizing": "border-box",
         padding: 0,
-        display: isHovered || !mouse_connected ? "inline-block" : "none"
+        display: isHovered || !mouse_connected ? "inline-block" : "none",
+        flex: "0 0 " + (props.size == "sm" ? "3vh" : "6vh")
     };
     let count_style = { ...buttonStyle };
     count_style["cursor"] = "default";
     count_style["display"] = !mouse_connected || isHovered || props.count > 0 && props.size == "lg" ? "inline-block" : "none";
+    count_style["flex"] = "0 1 33%"
     let menu_style = {
         width: "100%",
+        display: "block",
         position: "absolute",
         bottom: "5px",
+        zIndex: 5,
+        flex: "1 0 100%",
+        display: "flex",
+        flexFlow: "row nowrap",
+        justifyContent: "center"
     }
-    let countComponent = (<Button className="mx-auto"
-        size={props.size}
-        variant="dark"
-        active
-        style={count_style}
-        disabled={!isHovered}
-    >
-        {props.count}
-    </Button>);
     return (
         <div className="imageContainer">
             <OverlayTrigger hidden placement="auto" trigger={mouse_connected ? "hover" : "focus"}
@@ -45,25 +45,35 @@ function CardComponent(props) {
                     </Popover>
                 ) : <></>
                 }>
-                <div>
+                <div style={{ display: "flex", flexFlow: "row wrap", alignContent: "stretch", flex: "1 0 auto" } }>
                     <Image style={{ maxWidth: "100%" }} src={props.src} />
-                    <Stack direction="horizontal" gap={0} style={menu_style}>
-                        <Button
+                    <ButtonGroup style={menu_style}>
+                        {(isHovered || !mouse_connected) && <Button
                             size={props.size}
                             style={buttonStyle}
                             variant="danger"
                             onClick={() => props.updateCount(props.name, parseInt(props.count) - 1)}
                             disabled={props.count <= 0}
-                        >-</Button>
-                        {countComponent}
-                        <Button
+                            className="plusbtn"
+                        >-</Button>}
+                        <Button 
+                            size={props.size}
+                            variant="dark"
+                            active
+                            style={count_style}
+                            disabled={!isHovered}
+                        >
+                            {props.count}
+                        </Button>
+                        {(isHovered || !mouse_connected) && <Button
                             size={props.size}
                             style={buttonStyle}
                             variant="success"
                             onClick={() => props.updateCount(props.name, parseInt(props.count) + 1)}
                             disabled={props.count >= props.max}
-                        >+</Button>
-                    </Stack>
+                            className="minusbtn"
+                        >+</Button>}
+                    </ButtonGroup>
                 </div>
             </OverlayTrigger>
         </div>
