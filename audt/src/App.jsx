@@ -189,7 +189,8 @@ function App() {
                     if (!id_included)
                         tarr.push(i - 1);
                     for (var j = 0; j < _headers.length - (id_included ? 0 : 1); j++) {
-                        tarr.push(data[j]);
+                        if (data[j] != null)
+                            tarr.push((data[j] ?? "").replace(/(\s)/g, " "));
                     }
                     lines.push(tarr);
                     _data_dict[getID(tarr, _header_lookup)] = tarr;
@@ -220,7 +221,8 @@ function App() {
                     if (!id_included)
                         tarr.push(i - 1);
                     for (var j = 0; j < _headers.length - 1; j++) {
-                        tarr.push((new_data[j] ?? "").replace(/(\s)/g, " "));
+                        if (new_data[j] != null)
+                            tarr.push((new_data[j] ?? "").replace(/(\s)/g, " "));
                     } 
                     if (_data_dict[getID(tarr, _header_lookup)])
                         _data_dict[getID(tarr, _header_lookup)][header_lookup["Count"]] = tarr[_header_lookup["Count"]];
