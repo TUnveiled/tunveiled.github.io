@@ -24,7 +24,6 @@ function CardComponent(props) {
     count_style["flex"] = "0 1 33%"
     let menu_style = {
         width: "100%",
-        display: "block",
         position: "absolute",
         bottom: "5px",
         zIndex: 5,
