@@ -46,7 +46,7 @@ function App() {
     const [current_version, setCurrentVersion] = useState(true);
     const gallery = Object.values(import.meta.glob('/AU_Card_Images/*.png', { eager: true, query: '?url', import: 'default' }));
     const inline_images = { "mana": mana, "gold": gold, "left": left, "right": right, "target": target };
-    const SUPPRESSED_WARNINGS = ['Each child in a list should have a unique "key" prop', 'trigger limits the visibility of the overlay to just mouse users.'];
+    const SUPPRESSED_WARNINGS = ['trigger limits the visibility of the overlay to just mouse users.'];
     const consoleError = console.error;
     console.error = function filterWarnings(msg, ...args) {
         if (!SUPPRESSED_WARNINGS.some((entry) => msg.includes(entry)) && !SUPPRESSED_WARNINGS.some((entry) => args.some((arg) => arg.includes != null && arg.includes(entry)))) {
@@ -248,24 +248,25 @@ function App() {
             return "";
         switch (index) {
             case header_lookup["ID"]:
-                return <div className="numeric">{value}</div>
+                return <div key={`id-${index}-${value}`} className="numeric">{value}</div>
             case header_lookup["Count"]:
-                return (<Form.Control size="lg" style={{ "maxWidth": "100px", "padding": "20%" }} type="number"
+                return (<Form.Control key={`count-${getID(row)}`} id={`count-${getID(row)}`} size="lg" style={{ "maxWidth": "100px", "padding": "20%" }} type="number"
                     min="0" max={(["Commander", "Structure"].includes(row[header_lookup["type"]])) ? 1 : 3}
                     value={value} onChange={(e) => { updateCount(getID(row), e.target.value) }} />);
                 break;
             case header_lookup["name"]:
                 try {
                     return (
-                            <OverlayTrigger placement="auto" trigger={['hover', 'focus']} overlay={
-                                <Popover>
-                                    <Popover.Body>
-                                        <Image style={{ maxWidth: "100%" }} src={getImg(getID(row))} />
-                                    </Popover.Body>
-                                </Popover>
-                            }>
-                            <div style={{ height: "100%", display: "flex", alignItems: "center" }}>{value.replace(/\s/g, String.fromCharCode(160))}</div>
-                            </OverlayTrigger>
+                        <OverlayTrigger key={`trigger-${index}-${value}`} placement="auto" trigger={['hover', 'focus']} overlay={
+                            <Popover key={`popover-${index}-${value}`} >
+                                <Popover.Body key={`popover.body-${index}-${value}`} >
+                                    <Image key={`popover.image-${index}-${value}`} style={{ maxWidth: "100%" }} src={getImg(getID(row))} />
+                                </Popover.Body>
+                            </Popover>
+                            }
+                        >
+                            <div key={`name-${index}-${value}`} style={{ height: "100%", display: "flex", alignItems: "center" }}>{value.replace(/\s/g, String.fromCharCode(160))}</div>
+                        </OverlayTrigger>
                     )
                 } catch (e) {
                     console.log(e);
@@ -278,10 +279,12 @@ function App() {
                         value = value.substring(1, value.length - 1);
                     value = value.replace(/<br\s*[\/]?>/gi, "\n");
                     for (const [key, url] of Object.entries(inline_images)) {
+                        let _i = 0;
                         value = reactStringReplace(value, new RegExp(`(<<!*${key}>>)`),
-                            (match, i) => (<Image style={{ "maxHeight": "20px" }} src={url} />));
+                            (match, i) => (<Image key={`effect-img-${index}-${key}-${_i++}`} style={{ "maxHeight": "20px" }} src={url} />));
                     }
-                    value = reactStringReplace(value, /<b>(.*?)<\/b>/g, (match, i) => (<strong>{match}</strong>));
+                    let _i = 0;
+                    value = reactStringReplace(value, /<b>(.*?)<\/b>/g, (match, i) => (<strong key={`strong-${index}-${_i++}`} >{match}</strong>));
                     return value;
                 } catch (e) {
                     console.log(e);
@@ -290,7 +293,26 @@ function App() {
                 break;
             case header_lookup["mana cost"]:
                 try {
-                    return <div className="numeric">{Array.from({ length: value }, (_, i) => <Image key={"mana-" + i} style={{ "maxHeight": "20px" }} src={mana} />)}</div>;
+                    if (value < 5) {
+                        return <div key={`manadiv-${index}`} className="numeric" style={{ minWidth: "80px" }}>
+                            {Array.from({ length: value }, (_, i) => (<Image key={`mana-${getID(row)}-${i}`} style={{ "maxHeight": "20px" }} src={mana} />))}
+                        </div>;
+                    }
+                    else if (value < 9) {
+                        let half_cost = Math.ceil(value / 2);
+                        return (<>
+                            {Array.from({ length: 2 }, (_, i) => (
+                                <div key={`manadiv-${index}-${i}`} className="numeric" style={{ minWidth: "80px" }}>
+                                    {
+                                        Array.from({ length: i == 0 ? half_cost : value - half_cost }, (_, j) => <Image key={`mana-${getID(row)}-${j}`} style={{ "maxHeight": "20px" }} src={mana} />)
+                                    }
+                                </div>))}
+                        </>);
+                    }
+                    else {
+                        return <div key={`manadiv-${index}`} className="numeric">{value}&nbsp;<Image key={`mana-${index}-${value}`} style={{ "maxHeight": "20px" }} src={mana} /></div>
+                    }
+               
                 } catch (e) {
                     console.log(e);
                     return errorText("Error");
@@ -298,7 +320,7 @@ function App() {
                 break;
             case header_lookup["gold cost"]:
                 try {
-                    return (value > 0) ? <div className="numeric">{value}&nbsp;<Image style={{ "maxHeight": "20px" }} src={gold} /></div> : "";
+                    return (value > 0) ? <div key={`golddiv-${index}-${value}`} className="numeric">{value}&nbsp;<Image key={`goldimg-${index}-${value}`} style={{ "maxHeight": "20px" }} src={gold} /></div> : "";
                 } catch (e) {
                     console.log(e);
                     return errorText("Error");
@@ -306,7 +328,7 @@ function App() {
                 break;
             case header_lookup["power"]:
                 try {
-                    return (value > 0) ? <div className="numeric">{value}&nbsp;{String.fromCodePoint(0x2694)}</div> : "";
+                    return (value > 0) ? <div className="numeric" key={`power-${index}-${value}`} >{value}&nbsp;{String.fromCodePoint(0x2694)}</div> : "";
                 } catch (e) {
                     console.log(e);
                     return errorText("Error");
@@ -314,7 +336,7 @@ function App() {
                 break;
             case header_lookup["health"]:
                 try { 
-                    return (value > 0) ? <div className="numeric">{value}&nbsp;{String.fromCodePoint(0x1F6E1)}</div> : "";
+                    return (value > 0) ? <div className="numeric" key={`health-${index}-${value}`} >{value}&nbsp;{String.fromCodePoint(0x1F6E1)}</div> : "";
                 } catch (e) {
                     console.log(e);
                     return errorText("Error");
@@ -381,13 +403,13 @@ function App() {
                         <Container fluid>
                             <Row>
                                 <Col>
-                                    <Button variant="outline-info" className="linkbtn" size="lg" href="https://docs.google.com/document/d/1ugf1jPtwdqVR7T10WZrzN0rqWBDUZOmKxP2Rj-eh0O4/edit?usp=sharing" target="_blank">Game Rules</Button>
+                                    <Button variant="outline-info" className="linkbtn" size="lg" href="https://docs.google.com/document/d/1ugf1jPtwdqVR7T10WZrzN0rqWBDUZOmKxP2Rj-eh0O4/edit?usp=sharing" target="_blank">Game&nbsp;Rules</Button>
                                 </Col>
                                 <Col>
-                                    <Button variant="outline-info" className="linkbtn" size="lg" href="https://steamcommunity.com/sharedfiles/filedetails/?id=3252480722" target="_blank">Game Board</Button>
+                                    <Button variant="outline-info" className="linkbtn" size="lg" href="https://steamcommunity.com/sharedfiles/filedetails/?id=3252480722" target="_blank">Game&nbsp;Board</Button>
                                 </Col>
                                 <Col>
-                                    <Button variant="outline-info" className="linkbtn" size="lg" href={defaultCSV}>CSV Template</Button>
+                                    <Button variant="outline-info" className="linkbtn" size="lg" href={defaultCSV}>CSV&nbsp;Template</Button>
                                 </Col>
                             </Row>
                         </Container>
@@ -398,7 +420,7 @@ function App() {
                         <Stack direction="horizontal" gap={1}>
                             <div className="px-1" style={{ width: "100%" }}>
                                 <Button variant="outline-primary" as="label" size="lg" style={{ width: "100%", height: "100%" }}>Choose&nbsp;File...
-                                <Form.Control size="lg" name="file" type="file" style={{ display: "none" }} accept=".csv"
+                                <Form.Control id="file_input" size="lg" name="file" type="file" style={{ display: "none" }} accept=".csv"
                                     onChange={function (e) {
                                         let _file = e.target.files[0];
                                         let _form = e.target;
@@ -421,7 +443,7 @@ function App() {
                                 <TooltipShell placement="auto" header="Modify Card Details"
                                     body={(<>Keep this dark to update your deck to the latest version of AU!</>)}
                                     content={(<Button as="label" size="lg" variant="outline-warning" className="togglebtn" active={!current_version}>Modify&nbsp;Card&nbsp;Details
-                                        <Form.Check size="lg" name="checkBox" type="checkbox" checked={!current_version} style={{ display: "none" }}
+                                        <Form.Check id="currentversioncheckbox" size="lg" name="checkBox" type="checkbox" checked={!current_version} style={{ display: "none" }}
                                             onChange={(e) => { setCurrentVersion(!e.target.checked); }} />
                                     </Button>)}
                                 />
@@ -472,8 +494,8 @@ function App() {
 
                         <h2>Downloads</h2>
                         <ButtonGroup style={{width: "100%"} }>
-                            <FloatingLabel label="File Name" style={{width: "100%"} }>
-                                <Form.Control placeholder="File Name" id="filename" size="lg" type="text" />
+                            <FloatingLabel controlId="filename" label="File Name" style={{width: "100%"} }>
+                                <Form.Control placeholder="File Name" size="lg" type="text" />
                             </FloatingLabel>
                             <div className="vr"></div>
                             <Button style={ {alignSelf: "stretch"} } variant="outline-primary" size="lg" onClick={downloadCSV}>Save&nbsp;As&nbsp;CSV</Button>
@@ -554,10 +576,15 @@ function App() {
                             </tr>
                         </thead>
                         <tbody>
-                            {filtered_csv_data.map((row_value, index) => (<tr key={ getID(row_value) + "\\:" + index }>
-                                    {row_value.map((value, index2) => (<td key={getID(row_value) + "_" + index2}>{format_cell(value, index2, row_value)}</td>))}
-                                </tr>
-                            ))}
+                            {filtered_csv_data.map((row_value, index) => (
+                                <tr key={`row-${getID(row_value)}\\:${index}`}>
+                                    {row_value.map((value, index2) => (
+                                        <td key={`row-${getID(row_value)}\\:${index}-col-${index2}`}>
+                                            {format_cell(value, index2, row_value)}
+                                        </td>))
+                                    }
+                                </tr>))
+                            }
                         </tbody>
                     </Table>
                 </Tab>

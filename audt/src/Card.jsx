@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Image from 'react-bootstrap/Image';
-import Stack from 'react-bootstrap/Stack';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 
@@ -10,13 +9,13 @@ function CardComponent(props) {
     const [isHovered, setHover] = useState(false);
     let mouse_connected = matchMedia('(pointer:fine)').matches;
     const buttonStyle = {
-        "fontSize": props.size == "sm" ? "1.5vh" : "3vh",
-        "height": props.size == "sm" ? "3vh" : "6vh",
-        "width": props.size == "sm" ? "3vh" : "6vh",
+        "fontSize": props.size == "sm" ? "0.75vw" : "1.5vw",
+        "height": props.size == "sm" ? "1.5vw" : "3vw",
+        "width": props.size == "sm" ? "1.5vw" : "3vw",
         "boxSizing": "border-box",
         padding: 0,
         display: isHovered || !mouse_connected ? "inline-block" : "none",
-        flex: "0 0 " + (props.size == "sm" ? "3vh" : "6vh")
+        flex: "0 0 " + (props.size == "sm" ? "1.5vw" : "3vw")
     };
     let count_style = { ...buttonStyle };
     count_style["cursor"] = "default";
