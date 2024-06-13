@@ -189,8 +189,8 @@ function App() {
                     if (!id_included)
                         tarr.push(i - 1);
                     for (var j = 0; j < _headers.length - (id_included ? 0 : 1); j++) {
-                        if (data[j] != null)
-                            tarr.push((data[j] ?? "").replace(/(\s)/g, " "));
+                        data[j] = data[j] ? data[j].replace(/(\s)/g, " ") : null;
+                        tarr.push(data[j]);
                     }
                     lines.push(tarr);
                     _data_dict[getID(tarr, _header_lookup)] = tarr;
