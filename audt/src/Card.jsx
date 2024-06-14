@@ -9,7 +9,7 @@ function CardComponent(props) {
     const [isHovered, setHover] = useState(false);
     let mouse_connected = matchMedia('(pointer:fine)').matches;
     const buttonStyle = {
-        "fontSize": props.size == "sm" ? "0.9vw" : "1.5vw",
+        "fontSize": props.size == "sm" ? "0.9em" : "1.4em",
         "boxSizing": "border-box",
         padding: 0,
         display: isHovered || !mouse_connected ? "inline-block" : "none",
