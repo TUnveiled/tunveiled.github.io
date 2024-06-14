@@ -5,7 +5,7 @@ function FlexFilter(props) {
     let size = props.option_list.length > 8 ? "sm" : "lg";
     let flex = props.option_list.length > 8 ? "1 0 33%" : "1 0 50%"
     return (
-        <div style={{ display: "flex", flexFlow: "row wrap", alignContent: "stretch", flex: "1 0 auto"}}>
+        <div className="filterBox">
           {props.option_list.map((value, index) => (
 
               <Button key={`filter-${value}-${index}` } size={size} className="togglebtn" variant="outline-success" style={{ flex: flex, fontWeight: "bold", borderRadius: 0 }}

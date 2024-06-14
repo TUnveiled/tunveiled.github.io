@@ -71,6 +71,8 @@ button.nav-link {
     flex-flow: column wrap;
     align-content: stretch;
     text-align: center;
+    padding-left: 1px;
+    padding-right: 1px;
 }
 
 .col {
@@ -101,7 +103,25 @@ button.nav-link {
     opacity: 0.4;
 }
 
+.plusbtn, .minusbtn {
+    border-radius: 15px;
+}
+
 #filename {
     border-bottom-right-radius: 0;
     border-top-right-radius: 0;
+    min-width: 150px;
+}
+
+.filterBox {
+    display: flex;
+    flex-flow: wrap;
+    align-content: stretch;
+    flex: 1 0 auto;
+    overflow: hidden;
+    border-bottom-left-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
+    -webkit-box-shadow: inset 0px 0px 0px 10px #198754;
+    -moz-box-shadow: inset 0px 0px 0px 10px #198754;
+    box-shadow: inset 0px 0px 0px 2px #198754;
 }

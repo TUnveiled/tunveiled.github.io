@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import React from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import { createTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import 'bootstrap/dist/css/bootstrap.css';
 import '/src/App.css';
 import $, { each } from 'jquery';
 import Container from 'react-bootstrap/Container';
@@ -46,6 +48,23 @@ function App() {
     const [current_version, setCurrentVersion] = useState(true);
     const gallery = Object.values(import.meta.glob('/AU_Card_Images/*.png', { eager: true, query: '?url', import: 'default' }));
     const inline_images = { "mana": mana, "gold": gold, "left": left, "right": right, "target": target };
+    const theme = createTheme({
+        components: {
+            MuiUseMediaQuery: {
+                defaultProps: {
+                    noSsr: true,
+                },
+            },
+        }
+    });
+    const breakpointMatches = [
+        useMediaQuery('(min-width:576px'),
+        useMediaQuery('(min-width:768px'),
+        useMediaQuery('(min-width:992px'),
+        useMediaQuery('(min-width:1200px'),
+        useMediaQuery('(min-width:1400px'),
+    ];
+    const getBreakpointIndex = () => breakpointMatches.filter(a => a).length;
     const SUPPRESSED_WARNINGS = ['trigger limits the visibility of the overlay to just mouse users.'];
     const consoleError = console.error;
     console.error = function filterWarnings(msg, ...args) {
@@ -378,17 +397,19 @@ function App() {
         }
     }, []);
 
-    useEffect(updateFilters, [selected_factions, selected_types, selected_tags])
+    useEffect(updateFilters, [selected_factions, selected_types, selected_tags]);
+    let cards_in_row = Math.min(3 + Math.floor(4 / 3 * getBreakpointIndex()), 8);
+    let preview_cards_in_row = Math.min(2 * getBreakpointIndex() + (getBreakpointIndex() < 3 ? 6 : 2), 10);
 
     return (
-        <>
+        <div style={{padding: "2%"} }>
             <div>
                 <h1>AU Deckbuilder</h1>
                 <hr className="hr" />
             </div>
             <Container className="outerContainer" fluid>
                 <Row>
-                    <Col lg={5}>
+                    <Col md={12} lg={5}>
                         <h2>Instructions</h2>
                         <ul>
                             <li key="1">Import a CSV or <a href="#table">scroll down to the table</a> to get started!</li>
@@ -457,8 +478,8 @@ function App() {
                         />
                         <Container fluid className="filterContainer">
                             <Row>
-                                <Col>
-                                    <TooltipShell placement="top" header="Factions"
+                                <Col xl={4} lg={12} md={4} sm={4} xs={12}>
+                                    <TooltipShell placement="top-start" header="Factions"
                                         body={(<ul>
                                             <li>A deck can have up to two factions/tags.</li>
                                             <li>You can play any card that matches one of your factions/tags.</li>
@@ -470,15 +491,15 @@ function App() {
                                     <FlexFilter option_list={faction_list} selected_options={selected_factions} set_selected_options={setSelectedFactions} />
 
                                 </Col>
-                                <Col>
+                                <Col xl={4} lg={12} md={4} sm={4} xs={12}>
                                     <TooltipShell placement="top" header="Card Types"
                                         body={(<>A deck has exactly 40 units/spells, 6 structures, and 3 commanders (unless a card states otherwise; e.g. Rule of Law).</>)}
                                         content={(<Button className="headerbtn" size="lg" variant="outline-light">Type</Button>)}
                                     />
                                     <FlexFilter option_list={type_list} selected_options={selected_types} set_selected_options={setSelectedTypes} />
                                 </Col>
-                                <Col>
-                                    <TooltipShell placement="top" header="Tags"
+                                <Col xl={4} lg={12} md={4} sm={4} xs={12}>
+                                    <TooltipShell placement="top-end" header="Tags"
                                         body={(<ul>
                                             <li>A deck can have up to two factions/tags.</li>
                                             <li>You can play any card that matches one of your factions/tags.</li>
@@ -494,31 +515,37 @@ function App() {
 
                         <h2>Downloads</h2>
                         <ButtonGroup style={{width: "100%"} }>
-                            <FloatingLabel controlId="filename" label="File Name" style={{width: "100%"} }>
+                            <FloatingLabel controlId="filename" label="File Name" style={{ width: "100%" }}>
                                 <Form.Control placeholder="File Name" size="lg" type="text" />
                             </FloatingLabel>
                             <div className="vr"></div>
-                            <Button style={ {alignSelf: "stretch"} } variant="outline-primary" size="lg" onClick={downloadCSV}>Save&nbsp;As&nbsp;CSV</Button>
+                            <TooltipShell placement="top-end" header="Save as CSV"
+                                body="Save as a CSV to load it back into this tool later!"
+                                content={(<Button style={{ alignSelf: "stretch" }} variant="outline-primary" size="lg" onClick={downloadCSV}>Save&nbsp;as&nbsp;CSV</Button>)}
+                            />
                             <div className="vr"></div>
-                            <Button style={{ alignSelf: "stretch" }} variant="outline-primary" size="lg" onClick={downloadImage}>PNG&nbsp;Export</Button>
+                            <TooltipShell placement="top-end" header="PNG Export"
+                                body="Export this as a PNG to import it into Tabletop Simulator!"
+                                content={(<Button style={{ alignSelf: "stretch" }} variant="outline-primary" size="lg" onClick={downloadImage}>PNG&nbsp;Export</Button>)}
+                            />
                         </ButtonGroup>
 
                     </Col>
-                    <Col lg={7}>
+                    <Col md={12} lg={7}>
                         <h2>Preview</h2>
                         <Table size="sm" id="preview_table">
                             <tbody>
-                                {Array.from(Array(6).keys()).map((index1, row) => (
+                                {Array.from(Array(Math.ceil(60 / preview_cards_in_row)).keys()).map((index1, row) => (
                                     <tr key={index1}>
-                                        {Array.from(Array(10).keys()).map((index2, col) => (getImg(decklist[row * 10 + col]) != null) ?
+                                        {Array.from(Array(preview_cards_in_row).keys()).map((index2, col) => (getImg(decklist[row * preview_cards_in_row + col]) != null) ?
                                             (
                                                 <td key={index2}>
                                                     <Card
-                                                        src={getImg(decklist[row * 10 + col])}
-                                                        count={data_dict[decklist[row * 10 + col]][header_lookup["Count"]]}
+                                                        src={getImg(decklist[row * preview_cards_in_row + col])}
+                                                        count={data_dict[decklist[row * preview_cards_in_row + col]][header_lookup["Count"]]}
                                                         updateCount={updateCount}
-                                                        name={decklist[row * 10 + col]}
-                                                        max={(["Commander", "Structure"].includes(data_dict[decklist[row * 10 + col]][header_lookup["type"]])) ? 1 : 3}
+                                                        name={decklist[row * preview_cards_in_row + col]}
+                                                        max={(["Commander", "Structure"].includes(data_dict[decklist[row * preview_cards_in_row + col]][header_lookup["type"]])) ? 1 : 3}
                                                         size="sm"
                                                     />
                                                 </td>
@@ -545,17 +572,17 @@ function App() {
                 <Tab title="Cards : Grid View" eventKey="card">
                     <Table size="sm">
                         <tbody>
-                            {Array.from(Array(Math.ceil(filtered_csv_data.length / 8)).keys()).map((index1, row) => (
+                            {Array.from(Array(Math.ceil(filtered_csv_data.length / cards_in_row)).keys()).map((index1, row) => (
                                 <tr key={index1}>
-                                    {Array.from(Array(8).keys()).map((index2, col) => (getImg(getID(filtered_csv_data[row * 8 + col] ?? []) ?? "") != null) ?
+                                    {Array.from(Array(cards_in_row).keys()).map((index2, col) => (getImg(getID(filtered_csv_data[row * cards_in_row + col] ?? []) ?? "") != null) ?
                                         (
                                             <td key={index2}>
                                                 <Card
-                                                    src={getImg(getID(filtered_csv_data[row * 8 + col]))}
-                                                    count={filtered_csv_data[row * 8 + col][header_lookup["Count"]]}
+                                                    src={getImg(getID(filtered_csv_data[row * cards_in_row + col]))}
+                                                    count={filtered_csv_data[row * cards_in_row + col][header_lookup["Count"]]}
                                                     updateCount={updateCount}
-                                                    name={getID(filtered_csv_data[row * 8 + col])}
-                                                    max={(["Commander", "Structure"].includes(filtered_csv_data[row * 8 + col][header_lookup["type"]])) ? 1 : 3}
+                                                    name={getID(filtered_csv_data[row * cards_in_row + col])}
+                                                    max={(["Commander", "Structure"].includes(filtered_csv_data[row * cards_in_row + col][header_lookup["type"]])) ? 1 : 3}
                                                     size="lg"
                                                 />
                                             </td>
@@ -589,7 +616,7 @@ function App() {
                     </Table>
                 </Tab>
             </Tabs>
-        </>
+        </div>
     )
 }
 
