@@ -107,8 +107,8 @@ function App() {
     function downloadCSV() { // Convert decklist into CSV format and download
         try {
             let csvContent = "data:text/csv;charset=utf-8,"
-                + headers.slice((header_lookup["ID"] == 1) ? 1 : 0).join(",") + "\n"
-                + csv_data.map(e => e.slice(1).join(",")).join("\n");
+                + headers.join(",") + "\n"
+                + csv_data.map(e => e.join(",")).join("\n");
             var encodedUri = encodeURI(csvContent);
             var aDownloadLink = document.createElement('a');
             aDownloadLink.download = $("#filename").val() + ".csv";
@@ -463,7 +463,7 @@ function App() {
                             <div className="px-1">
                                 <TooltipShell placement="auto" header="Modify Card Details"
                                     body={(<>Keep this dark to update your deck to the latest version of AU!</>)}
-                                    content={(<Button as="label" size="lg" variant="outline-warning" className="togglebtn" active={!current_version}>Modify&nbsp;Card&nbsp;Details
+                                    content={(<Button as="label" size="lg" variant="outline-warning" className="togglebtn" active={!current_version}>{(current_version ? "Update Deck" : "Don't Update").replace(/\s/g, String.fromCharCode(160))}
                                         <Form.Check id="currentversioncheckbox" size="lg" name="checkBox" type="checkbox" checked={!current_version} style={{ display: "none" }}
                                             onChange={(e) => { setCurrentVersion(!e.target.checked); }} />
                                     </Button>)}
@@ -521,12 +521,12 @@ function App() {
                             <div className="vr"></div>
                             <TooltipShell placement="top-end" header="Save as CSV"
                                 body="Save as a CSV to load it back into this tool later!"
-                                content={(<Button style={{ alignSelf: "stretch" }} variant="outline-primary" size="lg" onClick={downloadCSV}>Save&nbsp;as&nbsp;CSV</Button>)}
+                                content={(<Button style={{ alignSelf: "stretch" }} variant="outline-primary" size="lg" onClick={downloadCSV}>CSV</Button>)}
                             />
                             <div className="vr"></div>
                             <TooltipShell placement="top-end" header="PNG Export"
                                 body="Export this as a PNG to import it into Tabletop Simulator!"
-                                content={(<Button style={{ alignSelf: "stretch" }} variant="outline-primary" size="lg" onClick={downloadImage}>PNG&nbsp;Export</Button>)}
+                                content={(<Button style={{ alignSelf: "stretch" }} variant="outline-primary" size="lg" onClick={downloadImage}>PNG</Button>)}
                             />
                         </ButtonGroup>
 
