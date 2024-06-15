@@ -36,7 +36,7 @@ function CardComponent(props) {
     }
     return (
         <div className="imageContainer">
-            <OverlayTrigger hidden placement="auto" trigger={mouse_connected ? "hover" : "focus"}
+            <OverlayTrigger hidden placement="auto" trigger="hover"
                 onToggle={(nextShow) => setHover(nextShow)}
                 overlay={(props.size == "sm") ? (
                     <Popover>

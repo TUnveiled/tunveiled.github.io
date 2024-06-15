@@ -16,7 +16,7 @@ function CardTableView(props) {
     let getID = props.getID;
 
     let transform_style = {
-        transition: "transform 0.5s ease-in",
+        transition: "transform",
         transformOrigin: "0 0",
         transform: `scale(${tablescale})`
     }
@@ -28,7 +28,7 @@ function CardTableView(props) {
         }
         else if (table != null && outer_div != null) {
             setTablescale(outer_div.current.offsetWidth / table.current.offsetWidth);
-            setOuterHeight(`${table.current.offsetHeight * outer_div.current.offsetWidth / table.current.offsetWidth+1}px`);
+            setOuterHeight(`${table.current.offsetHeight * outer_div.current.offsetWidth / table.current.offsetWidth}px`);
         }
 
     }
@@ -180,7 +180,7 @@ function CardTableView(props) {
     return (
         <div style={{ width: "100%", overflowX: "auto", overflowY: "hidden", height: outer_height }} ref={outer_div}>
             <div style={transform_style }>
-                    <Table bordered hover ref={table}>
+                    <Table bordered ref={table}>
                         <thead style={{ position: "sticky", top: "-1px" }}>
                             {getHeader()}
                         </thead>
