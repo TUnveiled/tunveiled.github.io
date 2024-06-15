@@ -1,196 +1,205 @@
-Count,name,type,faction,mana cost,gold cost,power,health,effect,tag1
-0,Animated Tomes,Unit,Arcan,0,0,1,1,"Flying<br>Defeat: Reveal cards from the top of your deck until you reveal a spell, put it into your hand then shuffle.",
-0,Apprentice,Unit,Arcan,0,0,1,1,"Spell Surge: Gets +1/+1 and, if power is greater than 3 and this is the first spell played this turn, draw 1.",
-0,Druggie Goblins,Unit,Arcan,1,1,3,3,"Deploy: Gain <<!mana>> and the next spell you play this turn has Cantrip.<br>Spell Surge: If that spell <<!target>><b>this</b>, gets +1/+1.",
-0,Familiar Flock,Unit,Arcan,2,3,2,2,Flying <br>Deploy: Summon two 1/1 familiar tokens within nearby lanes.<br>Spell Surge: Summon a 1/1 familiar token in a nearby lane.<br>Has +1/+1 for each nearby familiar token.,
-0,Fire Elemental,Unit,Arcan,1,3,3,3,Spell Surge: Gets +1/+1<br>Retaliate (power above 3).,
-0,Ice Elemental,Unit,Arcan,0,1,2,2,Spell Surge: <<!target>><b>nearby unit</b> gets -1/-1.,
-0,Kobold Sorcerer,Unit,Arcan,0,0,2,1,"Pack Tactics (Flying, +1/0)<br>Deploy, discard a spell: Deal 2 damage to <<!target>><b>nearby unit.</b>",Kobold
-0,Lingering Librarian,Unit,Arcan,2,4,3,3,"Slow, Flying <br>You may play spells from discard but, after you do, exile them. <br>Turn End: Pay <<!mana>> or discard this.",Spirit
-0,Magus,Unit,Arcan,1,1,2,2,Deploy: Play a spell from your hand at no cost.,
-0,Powder Monkey,Unit,Arcan,0,0,1,1,"Deploy: Discard 1, gain <<!mana>>, then you may pay <<!mana>> to draw 1.",Pirate
-0,Spell Shark,Unit,Arcan,0,1,2,2,Spell Surge: Has +2/+0 until end of turn.,
-0,Warlock,Unit,Arcan,2,5,4,4,"Deploy: Exile a spell from discard.<br>Attack: Play the exiled spell at no cost, then return it to exile.",
-0,Wizard,Unit,Arcan,1,1,3,3,Your spells cost <<!mana>> less.,
-0,Builder,Unit,Bruct,0,1,1,1,Deploy: Heal 1 to <<!target>><b>nearby structure</b>.,
-0,Gold Extractor,Unit,Bruct,1,0,0,3,"Retaliate 1<br>Turn Start: If Gold Extractor wasn't damaged last turn, gain <<!gold>>.",
-0,Gold Golem,Unit,Bruct,0,1,1,1,"Deploy, pay X <<!gold>>: Gets +2X/+2X.",
-0,Iron Golem,Unit,Bruct,1,2,3,4,"Deploy: During your opponent's next turn, enemy units in this lane have -2/-0.",
-0,Mana Extractor,Unit,Bruct,0,2,0,6,Armor 2<br>Supply <<!mana>> to nearby lanes.,
-0,Mana Golem,Unit,Bruct,1,0,2,2,"<<!mana>>: Gets +1/+1, and has Flying until end of turn.",
-0,Mecha,Unit,Bruct,1,3,0,6,"Armor 2 <br>Once per turn, <<!mana>>: <<!target>><b>commander in this lane</b> has +6/+0 and Trample until end of turn.",
-0,Mechanical Mimic,Unit,Bruct,0,0,0,2,Retaliate 1<br>Damaged: Gain 1 <<!gold>>.,
-0,Metal Dragon,Unit,Bruct,1,12,9,9,"Flying<br>Deploy, if this card was played from hand: Each player discards their deck. <br>Action: Deal 3 damage to <<!target>><b>anything.</b>",Dragon
-0,Meteor Golem,Unit,Bruct,1,2,3,3,Deploy: Deal 1 damage to nearby enemy units.,
-0,Scrap Golem,Unit,Bruct,0,0,1,1,Deploy: Remove any number of scrap counters from your commanders. Gets +1/+1 for each counter removed.,
-0,Scrap Hound,Unit,Bruct,0,0,2,1,Attack Structure: discard the top 2 cards of your deck.,
-0,Shield Golem,Unit,Bruct,0,0,0,4,Armor 1,
-0,Bandit,Unit,Diablo,0,1,2,2,Attack: Gain 1 <<!gold>>.,
-0,Gilded Guards,Unit,Diablo,0,1,2,3,Enemy units deployed in this lane get -1/-1.,
-0,Greedy Wyrm,Unit,Diablo,1,1,2,2,Flying <br>Deploy: gain 2 <<!gold>>.<br>Defeat: Your opponent gains 1 <<!gold>>.,Dragon
-0,Kobold Crew,Unit,Diablo,0,3,3,3,Pack Tactics +3/+0 <br>Deploy: Any commander called this turn has Haste.,Kobold
-0,Kobold Kin,Unit,Diablo,0,0,2,1,Pack Tactics +2/+0 ,Kobold
-0,Loyal Imp,Unit,Diablo,1,0,1,1,Flying <br>Deploy: Exile <<!target>><b>card that entered your discard this turn</b>.<br>Action: Play that exiled card.,
-0,Pirate Crew,Unit,Diablo,0,2,3,3,"Deploy: Discard 1, draw 1. <br>Attack: Gain 1 <<!gold>> and move to <<!target>><b>adjacent lane</b>.",Pirate
-0,Reckless Spirit,Unit,Diablo,1,0,4,1,Power halved while attacking a structure (round down). <br>After combat: discard this or pay <<!mana>>.,Spirit
-0,Red Dragon,Unit,Diablo,0,8,8,8,Flying<br>Deploy: Nearby enemy units take 2 damage.,Dragon
-0,Tengu Freebooter,Unit,Diablo,0,0,1,1,"Flying <br>Deploy: Discard 1, gain 1 <<!gold>>, then you may pay 1 <<!gold>> to draw 1.",Pirate
-0,Vulture Agents,Unit,Diablo,2,1,3,2,"Deploy: Exile <<!target>><b>nearby enemy unit</b>.<br>Your opponent can 'Action, give you 1 <<!gold>>: Return the exiled unit to play in this lane, silenced until end of turn.'",
-0,Zeal Elites,Unit,Diablo,0,1,3,2,Other nearby Zeal units and commanders have +1/+0.,Zeal
-0,Zeal Grenadier,Unit,Diablo,1,3,3,3,Deploy: Deal 3 damage to <<!target>><b>nearby unit or structure</b>.,Zeal
-0,Zeal Grunts,Unit,Diablo,0,0,2,1,Attack Structure: Gain 1 <<!gold>>.,Zeal
-0,Zeal Pair,Unit,Diablo,1,1,2,2,Deploy: Summon a 2/2 zeal token in an adjacent lane.,Zeal
-0,Dracolich,Unit,Grim,1,5,6,6,Flying <br>Deploy: Enemy units and commanders in <<!target>><b>lane</b> get -1/-1. You may discard 1 to repeat this process.,Dragon
-0,Elusive Smuggler,Unit,Grim,1,1,2,2,Deploy: Give commanders in this lane Flanking and Infiltrator until end of turn.<br>Turn Start: You may return this to hand.,
-0,Fleeting Spirit,Unit,Grim,1,0,2,1,"Flying<br>After combat: Discard this card, you may pay <<!mana>> to draw 1.",Spirit
-0,Ghoul Tombrobber,Unit,Grim,0,0,2,1,"Action, exile 2 other cards from discard: Play this from discard. ",
-0,Haunted Rogue,Unit,Grim,0,1,2,1,"Infiltrator<br>When discarded from play, summon a 1/1 spirit token with flying in a nearby lane. This activates even when defeated.",Spirit
-0,Necromancer,Unit,Grim,3,0,2,2,"Deploy: Discard <<!target>><b>defeated unit</b>, then exile <<!target>><b>unit</b> in any discard and create a token copy of it in this lane.",
-0,Rakish Triton,Unit,Grim,1,1,2,1,"Deploy: Discard 1, draw 1, <<!target>><b>nearby enemy</b> gets -1/-1.",Pirate
-0,Scavenger Squad,Unit,Grim,0,2,3,3,"Deploy: Discard <<!target>><b>up to 3 defeated units in this lane</b>, gain <<!gold>> for each.",
-0,Shadow Agents,Unit,Grim,0,5,5,5,"Infiltrator <br>When an enemy structure or commander in this lane is defeated, may move to <<!target>><b>lane.</b><br>When an allied structure or commander is defeated, may move to that lane.",
-0,Skeleton Archers,Unit,Grim,0,0,2,1,"Once per turn, discard 1: Gets +1/+1.<br>Has flanking if power is 4 or greater.",
-0,Vampire Maid,Unit,Grim,2,2,3,3,"Drain 3<br>Deploy: Search your deck for a card, discard it, shuffle.",
-0,Zombie Cat,Unit,Grim,0,0,1,1,"Slow <br>If this would be discarded, play it instead.",
-0,Zombie Horde,Unit,Grim,1,0,2,2,Has +3/+3 for each Zombie Horde in your discard.,
-0,Zombie Worm,Unit,Grim,1,0,7,7,Additional cost: exile 13 cards from your discard.<br>Trample,
-0,Blue Dragon,Unit,Myst,1,5,7,7,"Flying<br>Deploy: Deal 3 damage to <<!target>><b>unit</b>, you may pay <<!mana>> to repeat this process.",Dragon
-0,Dormant Ward,Unit,Myst,1,1,0,5,Armor 1 <br><<!mana>>: Has +3/+0 until end of turn.,
-0,Druid,Unit,Myst,1,0,2,2,"Once per turn, pay X <<!mana>>: Heal X to <<!target>><b>unit or structure in this lane</b>.",
-0,Dryad,Unit,Myst,1,1,0,4,"Retaliate 1 <br>Turn Start: If undamaged, gain <<!mana>>.",
-0,Ent,Unit,Myst,3,0,4,6,Retaliate 3,
-0,Fairy Friends,Unit,Myst,0,0,1,1,Flying<br>Once per turn <<!mana>>: Give <<!target>><b>another nearby unit</b> +2/+0 and Flying until end of turn.,
-0,Harpy,Unit,Myst,0,2,3,2,"Flying<br>Once per turn, <<!mana>>: Move <<!target>><b>enemy unit</b> one lane closer.",
-0,Mana Eater,Unit,Myst,0,0,0,2,Retaliate 1<br>Damaged: Gain <<!mana>> at the start of your next turn.,
-0,Rave Rangers,Unit,Myst,1,0,2,2,"Deploy: You may move <<!target>><b>adjacent unit</b> to this lane. If it was allied, Heal 1 to it.",
-0,Stubborn Spirit,Unit,Myst,0,0,1,1,Flying <br><<!mana>>: Play this in a lane of your opponent's choosing. Activate this even if this is defeated or in discard.,Spirit
-0,Totem Warrior,Unit,Myst,0,0,2,1,"When this is discarded during your turn, you may pay <<!mana>><<!mana>>: Gain <<!mana>><<!mana>><<!mana>>.",
-0,Vinewhip Beast,Unit,Myst,2,2,4,4,Deploy: Move <<!target>><b>adjacent enemy unit</b> to this lane.<br>Enemy units cannot move from this lane.,
-0,Witch,Unit,Myst,1,3,2,3,"Flying<br>Deploy: Summon two 0/1 Newt tokens within nearby lanes. <br>Once per turn, discard a nearby allied unit: Gain <<!mana>>. <br><<!mana>>: Move to <<!target>><b>adjacent lane</b>.",
-0,Assassin,Unit,Rula,1,1,3,1,Infiltrator,
-0,Ballista,Unit,Rula,0,3,6,2,Action: Has flanking until end of turn.,
-0,Buccaneer,Unit,Rula,1,0,2,2,"Deploy: Discard 1, draw 1, deal 1 damage to <<!target>><b>nearby enemy unit</b>.",Pirate
-0,Caravan,Unit,Rula,0,0,1,2,"Deploy: Supply <<!gold>> to <<!target>><b>nearby lane</b> until end of turn.<br>Action, discard this from play: Move <<!target>><b>allied unit in this lane</b> to <<!target>><b>adjacent lane</b>.",
-0,Cavalry,Unit,Rula,0,1,2,2,"Flanking, Training 1",
-0,Dragon Prince,Unit,Rula,0,4,3,3,Flying <br>Supply <<!gold>> to nearby lanes.,Dragon
-0,Duelist,Unit,Rula,0,1,2,2,"Retaliate 2, Training 1",
-0,Medic,Unit,Rula,1,0,1,1,Deploy: Heal 1 to <<!target>><b>nearby unit or commander</b>.,
-0,Noble Giant,Unit,Rula,2,3,4,5,Trample<br>Other units and commanders in this lane are Silenced.,
-0,Reinforcements,Unit,Rula,0,0,2,1,"Deploy: If you have no cards in hand, draw 1.",
-0,Royal Knights,Unit,Rula,0,5,5,5,"Flanking, Training 2 <br>Attack: May move to an adjacent lane.",
-0,Spearman,Unit,Rula,0,0,2,1,Gets +1/+1 when it moves lanes.,
-0,Tactician,Unit,Rula,0,0,1,1,"Deploy: Draw 1, discard 1. <br>Action: Return to hand.",
-0,Valkyrie,Unit,Rula,1,2,2,1,"Flying, Flanking <br>Deploy: Return <<!target>><b>defeated allied unit in this lane</b> to your hand.",
-0,Wyvern Rider,Unit,Rula,1,3,3,3,"Flying, Flanking, Training 1",
-0,Mercenary Band,Unit,General,0,1,3,3,,
-0,Channel,Spell,Arcan,2,0,0,0,Cantrip <br>Draw 2.,
-0,Coalesce,Spell,Arcan,1,0,0,0,Cantrip <br>Gain <<!mana>><<!mana>>.,
-0,Polymorph,Spell,Arcan,2,0,0,0,<<!target>><b>Unit or commander</b> is transformed into a 1/1 rabbit.,
-0,Simulacrum,Spell,Arcan,3,0,0,0,"Summon a 0/2 commander homunculus token, then you may relinquish a structure and discard 1 to transform it into an undamaged token copy of <<!target>><b>allied commander</b> that gets -1/-1.",
-0,Sputter,Spell,Arcan,0,0,0,0,Cantrip<br>Draw 1.,
-0,Summon Familiar,Spell,Arcan,1,0,0,0,Cantrip<br>Summon a 1/1 familiar token.,
-0,Warp,Spell,Arcan,1,0,0,0,Move <<!target>><b>unit</b> to a different lane.,
-0,Calibrate,Spell,Bruct,1,0,0,0,"Cantrip <br>Draw 2, discard 1.",
-0,Create,Spell,Bruct,2,0,0,0,Summon a 0/2 homunculus token in each lane.,
-0,Homing Missile,Spell,Bruct,1,0,0,0,"Deal 3 armor piercing damage to <<!target>><b>commander</b>, draw 1.",
-0,Magnetize,Spell,Bruct,0,0,0,0,Cantrip <br>Move <<!target>><b>unit</b> to a lane with an active allied commander.,
-0,Repair,Spell,Bruct,1,0,0,0,"Rejuvenate <<!target>><b>structure</b>, draw 1.",
-0,Siege Bolt,Spell,Bruct,3,0,0,0,Deal 4 damage to the frontmost ranks of <<!target>><b>two adjacent lanes.</b>,Bolt
-0,Transmute,Spell,Bruct,1,0,0,0,"Cantrip<br>Gain 1 <<!gold>>, draw 1.",
-0,Bribe,Spell,Diablo,0,1,0,0,Move <<!target>><b>enemy unit or commander</b> to <<!target>><b>adjacent lane</b>.,
-0,Dragon's Breath,Spell,Diablo,3,0,0,0,Cantrip<br>Deal 4 damage to enemy units and commanders in <<!target>><b>lane</b>.,Dragon
-0,Fireball,Spell,Diablo,2,0,0,0,Deal 3 damage to enemy units in <<!target>><b>lane</b>.,
-0,Spark,Spell,Diablo,1,0,0,0,"Cantrip<br>Deal 1 damage to <<!target>><b>unit</b>, draw 1.",Bolt
-0,Twin Bolt,Spell,Diablo,1,0,0,0,Deal 1 damage to any <<!target>><b>two things</b>.,Bolt
-0,Assimilate,Spell,Grim,2,0,0,0,"Exile X (up to 5) cards from discard, deal X damage to <<!target>><b>unit</b>, and heal X to <<!target>><b>unit in that lane</b>.",
-0,Consume,Spell,Grim,1,0,0,0,"Cantrip <br>Discard <<!target>><b>defeated allied unit</b>, heal 1 to <<!target>><b>nearby unit</b>.",
-0,Disintegrate,Spell,Grim,3,0,0,0,Exile <<!target>><b>anything</b>.,
-0,Revive,Spell,Grim,1,0,0,0,Cantrip<br>Return <<!target>><b>unit in your discard</b> to hand.,
-0,Ritual,Spell,Grim,0,0,0,0,Cantrip<br>Additional Cost: Discard an active allied unit.<br>Gain <<!mana>><<!mana>>.,
-0,Wither,Spell,Grim,1,0,0,0,"Discard the top 3 cards of your deck, <<!target>><b>unit</b> gets -1/-1.",
-0,Awaken,Spell,Myst,3,0,0,0,Additional Cost: Relinquish a structure. <br><<!target>><b>Structure</b> is transformed into a 4/4 Elemental.,
-0,Bestow,Spell,Myst,1,0,0,0,"<<!target>><b>Unit</b> gets +3/+3, or <<!target>><b>commander</b> gets +2/+2.",
-0,Earthquake,Spell,Myst,5,0,0,0,Deal 5 damage to all enemy units. Enemy structures are silenced until your next turn.,
-0,Gate,Spell,Myst,2,0,0,0,Move <<!target>><b>any number of allied units</b> to <<!target>><b>lane</b>.,
-0,Heal,Spell,Myst,1,0,0,0,"Rejuvenate <<!target>><b>unit</b>, draw 1.",
-0,Rescue,Spell,Myst,1,0,0,0,Cantrip<br>Return <<!target>><b>allied unit</b> to hand.,
-0,Wish,Spell,Myst,2,0,0,0,"Search your deck for a card, and put it into your hand.",
-0,Command,Spell,Rula,1,0,0,0,"<<!target>><b>Two active units in different lanes</b>. Move one to the other's lane, they have +1/+0 until end of turn.",
-0,Embolden,Spell,Rula,1,0,0,0,"Cantrip<br><<!target>><b>unit</b> has +4/+0 until end of turn, or <<!target>><b>commander</b> has +2/+0 until end of turn.",
-0,Gust,Spell,Rula,0,0,0,0,Cantrip <br>Move <<!target>><b>allied unit</b> to <<!target>><b>adjacent lane</b>.,
-0,Recall,Spell,Rula,1,0,0,0,Return <<!target>><b>unit</b> to hand.,
-0,Retreat,Spell,Rula,2,0,0,0,Return <<!target>><b>commander</b> to the standby zone.,
-0,Grace,Spell,General,2,0,0,0,Rejuvenate all units in <<!target>><b>lane</b>.,
-0,Lightning Bolt,Spell,General,0,0,0,0,Deal 3 damage to <<!target>><b>unit or commander</b>.,Bolt
-0,Leyline Tap,Structure,Arcan,0,0,0,6,The first spell you play each turn costs <<!mana>> less.,
-0,Magic School,Structure,Arcan,0,1,0,7,"Turn Start: Reveal the top card of your deck, if it's a spell, put it into your hand.",
-0,Junk Yard,Structure,Bruct,0,0,0,6,Turn Start: Discard the top card of your deck.<br>Action 2 <<!gold>>: Put <<!target>><b>card discarded this turn</b> into your hand.,
-0,Roving Fortress,Structure,Bruct,1,3,1,10,Armor 2 <br>Once per turn: Move to <<!target>><b>adjacent lane with no structures</b> or swap with <<!target>><b>adjacent structure</b>.,
-0,Arena,Structure,Diablo,0,0,0,7,"When an enemy unit in this lane is defeated, gain 1 <<!gold>>.",
-0,Tower,Structure,Diablo,0,1,0,8,Allied commanders that arrive in this lane get +1/+1.<br>Once per turn: Move <<!target>><b>allied commander in this lane</b> to <<!target>><b>adjacent lane</b>.,
-0,Altar,Structure,Grim,1,1,0,6,"Turn Start, discard <<!target>><b>nearby defeated allied unit</b>, exile 2 cards from your discard pile: Draw 1.",
-0,Smugglers' Den,Structure,Grim,0,0,0,6,"Turn Start: You may discard 1 and exile 2 cards from discard.<br>Defeat: Pay X <<!gold>> to return X cards from exile to hand, then discard your exile.<br>Action: Defeat this, and gain 3 <<!gold>>.",
-0,Dyna Grove,Structure,Myst,2,0,0,8,Retaliate 2<br>Turn Start: Gain <<!mana>>.,
-0,Shrine,Structure,Myst,0,0,0,6,"Once per turn, 1 <<!gold>>: Gain <<!mana>>.<br>Damaged: Reduce the cost of Shrine's abilities by 1 <<!gold>> next turn.",
-0,Royal Palace,Structure,Rula,0,1,0,7,"Supply <<!mana>> and <<!gold>> to this lane. <br>Once per turn, relinquish a structure: Supply <<!mana>> and <<!gold>> to adjacent lanes until end of turn.",
-0,Turret,Structure,Rula,1,0,1,6,<<!mana>>: +1/+0 until end of turn.,
-0,Armory,Structure,General,0,0,0,6,Allied units in this lane have +1/+1.,
-0,Bank,Structure,General,0,0,0,5,Turn Start: Add 1 <<!gold>> to this.<br>Action: Take all <<!gold>> from this.,
-0,Barbed Wire,Structure,General,0,1,0,6,"Defender, Retaliate 2.",
-0,Dungeon,Structure,General,0,0,0,6,Retaliate 1<br>Defeat: Draw 1.,
-0,Garden,Structure,General,0,1,0,5,Turn Start: Gain <<!mana>>.,
-0,Guildhall,Structure,General,0,0,0,7,"Once per turn, Choose 1:<br>- Pay <<!mana>>: gain 1 <<!gold>>. <br>- Pay <<!gold>>: gain <<!mana>>.",
-0,Laboratory,Structure,General,1,0,0,5,"Turn Start: Draw 1, discard 1.",
-0,Library,Structure,General,0,0,0,6,Action <<!mana>>: Draw 1.,
-0,Market,Structure,General,0,1,0,5,Turn Start: Choose one <br>- Gain 1 <<!gold>> <br>- 2 <<!gold>>: Draw 1<br>- Discard 1: Gain 3 <<!gold>>,
-0,Teleporter,Structure,General,1,0,0,6,"Action: Move <<!target>><b>allied unit</b> to this lane, or from this lane to any <<!target>><b>lane</b>.",
-0,Wall,Structure,General,0,0,0,12,,
-0,Dragon Hoard,Structure,Tag,0,0,0,7,"Damaged: Your opponent gains 1 <<!gold>>, and your dragons cost <<!gold>> and <<!mana>> less next turn.",Dragon
-0,Kobold Mountain,Structure,Tag,0,0,0,6,Damaged: Summon a 1/1 Kobold with 'Pact Tactics +1/+0' in a nearby lane.,Kobold
-0,Pirate Ship,Structure,Tag,1,2,0,4,"The first time you discard in a turn: +3/+0 until end of turn. <br>Turn End: Move <<!right>>. If you cannot, flip the direction of the arrow and repeat the process (<<!right>> flips to <<!left>> and vice versa).",Pirate
-0,Séance Circle,Structure,Tag,2,0,0,13,"Nearby allied spirit units have +1/+1.<br>Action, discard a unit: Summon a 1/1 spirit token with flying in a nearby lane.<br>You cannot play units in nearby lanes, this effect persists after defeat.",Spirit
-0,Ale,Commander,Arcan,1,1,4,4,"Arrive: Return <<!target>><b>spell in discard</b> to hand.<br>Once per turn, after you play a spell with <<!mana>> base cost: You may play it again.",
-0,Aradin,Commander,Arcan,1,0,3,3,"Arrive: Reveal the top 6 cards of your deck, put up to 2 revealed spells into your hand then shuffle. <br>Once per turn, discard 1: Return <<!target>><b>spell in discard</b> to hand.",
-0,Ninlil,Commander,Arcan,0,0,3,4,Flying <br>Your bolt spells deal double damage.,
-0,Odin,Commander,Arcan,0,0,3,3,"Flying<br>Arrive: Look at the top 4 cards of your deck, discard any number, and put the rest back in any order. <br>Action <<!mana>><<!mana>>: Return Odin to standby, return <<!target>><b>unit in this lane</b> to hand.",
-0,Rodrigo,Commander,Arcan,0,0,3,3,"Spell Surge: Deal 1 damage to enemy units and commanders in this lane, draw 1, discard 1.",
-0,Selene,Commander,Arcan,0,0,4,4,"Arrive: If you have 1 or less cards in hand, search your deck for a spell, put it into your hand, then shuffle. <br>After you cast a spell that <<!target>><b>Selene</b>, you may move her to <<!target>><b>nearby lane</b>. Then deal damage equal to her power to the frontmost rank of that lane.",
-0,Stranger,Commander,Arcan,2,0,5,5,"Spell Surge: Exile the top card of each deck, deal 1 damage to <<!target>><b>nearby enemy unit or commander</b>. <br>Action, relinquish a commander, <<!mana>><<!mana>>: Summon the relinquished commander transformed as an undamaged copy of Stranger.<br>Turn End: If you have 3+ active 'Stranger' commanders and 40+ cards are exiled, you win the game. ",
-0,B,Commander,Bruct,0,0,2,4,"Armor 3 <br>Once per turn, <<!mana>>: Taunt <<!target>><b>nearby enemy unit</b> until the start of your next turn.",
-0,Egnis,Commander,Bruct,0,0,2,2,"Scrap Collector<br>Call: Exile a token copy of <<!target>><b>allied unit</b> as a schematic.<br>Arrive: Summon a token copy of the schematic in this lane.<br>Action, remove X scrap, 6-X <<!gold>>: Summon a token copy of the schematic in a nearby lane.",Kobold
-0,Fulton,Commander,Bruct,0,0,4,5,Scrap Collector<br>Retaliate (scrap)<br>Remove 2 scrap: Gets +1/+1.,
-0,Maach,Commander,Bruct,0,0,1,4,"Flanking, Scrap Collector.<br>Has +1/+0 per scrap.<br>Remove 2 scrap: The next spell you play this turn has Cantrip.",
-0,Maya,Commander,Bruct,0,0,1,2,"Flying, Scrap Collector<br>You may reduce incoming damage to Maya by removing 1 scrap per damage <br>Action, remove all scrap: Deal 3 damage per scrap removed to the frontmost rank of <<!target>><b>lane</b>.",Pirate
-0,V,Commander,Bruct,0,0,3,5,"Retaliate 1, Defender<br>V Has Defender for adjacent lanes.<br>Damaged: Gets +1/+1.",
-0,Veefur,Commander,Bruct,0,1,1,1,"Arrive: Discard the top 3 cards of your deck. <br>Once per turn, exile a unit from discard: Veefur transforms into a copy of that unit until your next turn.",
-0,Asline,Commander,Diablo,0,0,4,4,Armor 2 <br>Allied units in this lane have +1/+0.,Zeal
-0,Bedi,Commander,Diablo,0,0,4,4,"Once per turn, take 1 damage: Has +1/+0 and flanking until the end of turn <br><<!mana>>: Deal 1 armor piercing damage to <<!target>><b>anything</b>.",Zeal
-0,Carlius,Commander,Diablo,0,0,4,4,Arrive: Rejuvenate nearby allied zeal units and commanders.,Zeal
-0,Nico,Commander,Diablo,0,0,2,3,"Flying, Flanking<br>Defeat: Gets +1/+1, and you may relinquish a structure to rejuvenate Nico.",
-0,Obedience,Commander,Diablo,0,0,4,3,Armor 2 <br>Can always attack the commander rank. <br><<!mana>>: Deal 1 damage to <<!target>><b>anything</b>.,Zeal
-0,Vasana,Commander,Diablo,0,6,8,8,Flying <br>Arrive: Deal 1 damage to all enemy units.,Dragon
-0,Victor,Commander,Diablo,1,3,4,4,"Call: Defeat all enemy units in this lane, gain <<!gold>> for each. <br><<!mana>>: Spells cannot affect units or commanders in this lane until your next turn.",
-0,Althokha,Commander,Grim,0,1,4,4,"Arrive: Defeat <<!target>><b>enemy unit in this lane</b>. <br>Action, discard a defeated enemy unit in this lane: Gets +1/+1 and has flanking until end of turn.",
-0,Haulf-Dan,Commander,Grim,0,0,3,6,"Arrive: Nearby enemy units are silenced until your next turn.<br>Once per turn, exile a card from discard: <<!target>><b>Nearby allied unit</b> gets +1/+1.",
-0,Kai,Commander,Grim,0,0,4,4,"Drain 1<br>Action, lose 2 HP, <<!mana>>: Summon a 4/1 shadow token in a nearby lane.",
-0,Kornelius,Commander,Grim,1,0,4,3,Flying<br>Arrive: Return <<!target>><b>up to 2 cards in discard</b> to hand.<br>Action <<!mana>><<!mana>>: Exile <<!target>><b>any number of defeated units and commanders</b>. Has +1/+1 for each until end of turn.,
-0,Reese,Commander,Grim,0,0,2,4,"Arrive: Gain <<!mana>>, discard 1, draw 1.<br>Exile a unit from your discard pile, <<!mana>>: Summon a 1/1 spirit token with flying within nearby lanes.",Spirit
-0,Stray,Commander,Grim,0,0,3,4,"Enemy units in this lane have Slow. <br><<!mana>><<!mana>>: Exile <<!target>><b>unit or commander that hasn't arrived yet in this lane</b>. <br>Action, relinquish a structure:  Stray's abilites affect nearby lanes until your next turn.",
-0,Vakai,Commander,Grim,0,0,3,3,Discard 1: Rejuvenate Vakai. You can activate this even if Vakai is defeated.,
-0,Atheen,Commander,Myst,0,0,0,6,"Arrive: Move <<!target>><b>any number of allied units</b> to this lane, or move <<!target>><b>any number of allied units in this lane</b> to <<!target>><b>lane</b>. <br><<!mana>>: <<!target>><b>Allied unit in this lane</b> gets +1/+1.<br><<!mana>>: Silence <<!target>><b>nearby enemy commander</b> until your next turn. <br>At end of turn, pay <<!mana>> or return Atheen to standby. <br>Defeat: Return Atheen to standby.",
-0,Eirini,Commander,Myst,0,0,4,4,Arrive: Gain <<!mana>>.<br>Once per turn: Move to <<!target>><b>adjacent lane</b>.<br><<!mana>>: Nearby commanders have +1/+0 until the end of the turn.,
-0,Kriv,Commander,Myst,1,0,1,3,"Flying<br>Arrive: Create a token copy of Kriv in each adjacent lane with no commanders.<br>Action, <<!mana>>: Swap postions with <<!target>><b>another Kriv</b>, and if this isnt a token, Arrive.",
-0,Luupo,Commander,Myst,1,0,1,3,"Arrive: Rejuvenate allied units in this lane, and they have +2/+0 until end of turn.<br>Action <<!mana>>: Heal 1 to <<!target>><b>nearby unit</b>, and it gets +1/+1.",
-0,Palmera,Commander,Myst,0,1,3,6,Arrive: Gain <<!mana>><<!mana>>.<br>Action <<!mana>><<!mana>>: Deal 4 damage to the frontmost rank of <<!target>><b>nearby lane</b>.,
-0,Saene,Commander,Myst,0,0,5,3,Arrive: Move <<!target>><b>any number of nearby allied units</b> to nearby lanes.<br>Once per turn: Move to <<!target>><b>adjacent lane</b>.<br><<!mana>>: Get +1/+0 until end of turn.,
-0,Teddy,Commander,Myst,0,0,3,3,"Teddy is unaffected by spells.<br>Once per turn, 1 <<!gold>>: Teddy gets +1/+1 and <<!target>><b>nearby enemy unit</b> is transformed into a 1/1 rabbit until your next turn.",
-0,Alexander,Commander,Rula,1,2,5,5,Haste<br>Action: Move to <<!target>><b>lane with an enemy unit or commander with at least 4 remaining HP</b>.,
-0,Chariot,Commander,Rula,1,0,5,4,Flanking <br>Arrive: Rejuvenate <<!target>><b>nearby allied commander</b>.,
-0,Law (Base),Commander,Rula,1,0,3,6,"Rule of Law. <br>Flying, Defender",
-0,Law (Beast),Commander,Rula,1,0,6,5,Rule of Law. <br>Armor 2,
-0,Law (Cat),Commander,Rula,1,0,4,4,Rule of Law. <br>Haste,
-0,Law (Snake),Commander,Rula,1,0,3,2,"Rule of Law. <br>Arrive: Move <<!target>><b>any number of enemy units or commanders in this lane</b> to an adjacent lane, and they each get -1/-1. <br>Spell Surge: Arrive.",
-0,Law (Sword),Commander,Rula,1,0,7,3,Rule of Law. <br>Action <<!mana>>: Negate the next source of damage Law takes before your next turn.,
-0,Lufin,Commander,Rula,0,0,2,5,Arrive: Allied units and structures in this lane Heal 1. <br>Action <<!mana>>: Move <<!target>><b>nearby allied unit</b> to <<!target>><b>another nearby lane</b> and it gets +1/+1.,
-0,Reshi,Commander,Rula,0,0,3,4,"Infiltrator <br>Attack Structure: draw 1, and your opponent reveals their hand.",
-0,Sindri,Commander,Rula,0,1,3,5,Arrive: Summon a 2/2 dwarf token in two nearby lanes.<br>Once per turn <<!mana>>: Heal 1 to <<!target>><b>nearby structure</b>.,
+Count,ID,name,type,faction,mana cost,gold cost,power,health,effect,tag1
+0,0,Animated Tomes,Unit,Arcan,0,0,1,1,"Flying<br>Defeat: Reveal cards from the top of your deck until you reveal a spell, put it into your hand then shuffle.",
+0,1,Apprentice,Unit,Arcan,0,0,1,2,Spell Surge: Gets +1/+1.,
+0,2,Druggie Goblins,Unit,Arcan,1,1,3,3,"Deploy: Gain <<!mana>> and the next spell you play this turn has Cantrip.<br>Spell Surge: If that spell targeted this, gets +1/+1.",
+0,3,Familiar Flock,Unit,Arcan,2,3,1,2,Flying <br>Deploy: Summon two 1/1 familiar tokens within nearby lanes.<br>Spell Surge: Summon a 1/1 familiar token in a nearby lane.<br>Has +1/+1 for each nearby familiar token.,
+0,4,Fire Elemental,Unit,Arcan,1,3,3,3,Spell Surge: Gets +1/+1<br>Retaliate (power above 3).,elemental
+0,5,Ice Elemental,Unit,Arcan,0,1,2,1,Spell Surge: <<!target>><b>nearby unit</b> gets -1/-1.,elemental
+0,6,Kobold Sorcerer,Unit,Arcan,0,0,2,1,"Pack Tactics (Flying, +1/0)<br>Deploy, discard a spell: Deal 2 damage to <<!target>><b>nearby unit.</b>",kobold
+0,7,Lingering Librarian,Unit,Arcan,2,3,3,3,"Slow, Flying <br>You may play spells from discard but, after you do, exile them. <br>Turn End: Pay <<!mana>> or discard this.",spirit
+0,8,Magus,Unit,Arcan,1,1,2,2,Deploy: Play a spell from your hand at no cost.,
+0,9,Powder Monkey,Unit,Arcan,0,0,1,2,"Deploy: Discard 1, gain <<!mana>>, then you may pay <<!mana>> to draw 1.",pirate
+0,10,Spell Shark,Unit,Arcan,0,1,2,2,Spell Surge: Has +2/+0 until end of turn.,
+0,11,Warlock,Unit,Arcan,2,5,4,4,"Deploy: Exile a spell from discard.<br>Attack: Play the exiled spell at no cost, then return it to exile.",
+0,12,Wizard,Unit,Arcan,0,2,3,3,Your spells cost <<!mana>> less.,
+0,13,Builder,Unit,Bruct,0,1,1,1,Deploy: Heal 1 to <<!target>><b>nearby structure</b>.,
+0,195,Flaming Myrmidon,Unit,Bruct,0,6,3,4,Retaliate 3<br>Costs 1 <<!gold>> less for each spell in your discard.,elemental
+0,14,Gold Extractor,Unit,Bruct,1,0,0,3,"Retaliate 1<br>Turn Start: If Gold Extractor wasn't damaged last turn, gain <<!gold>>.",
+0,15,Gold Golem,Unit,Bruct,0,1,1,1,"Deploy, pay X <<!gold>>: Gets +2X/+2X.",
+0,16,Iron Golem,Unit,Bruct,1,2,3,4,"Deploy: During your opponent's next turn, enemy units in this lane have -2/-0.",
+0,17,Mana Extractor,Unit,Bruct,0,2,0,6,Armor 2<br>Supply <<!mana>> to nearby lanes.,
+0,18,Mana Golem,Unit,Bruct,1,0,2,2,"<<!mana>>: Gets +1/+1, and has Flying until end of turn.",
+0,19,Mecha,Unit,Bruct,0,3,0,6,"Armor 2 <br>Once per turn, <<!mana>>: <<!target>><b>commander in this lane</b> has +6/+0 and Trample until end of turn.",
+0,20,Mechanical Mimic,Unit,Bruct,0,0,0,2,Retaliate 1<br>Damaged: Gain 1 <<!gold>>.,
+0,21,Metal Dragon,Unit,Bruct,1,12,9,9,"Flying<br>Deploy, if this card was played from hand: Each player discards their deck. <br>Action: Deal 3 damage to <<!target>><b>anything.</b>",dragon
+0,22,Meteor Golem,Unit,Bruct,1,2,3,3,Deploy: Deal 1 damage to nearby enemy units.,
+0,23,Scrap Golem,Unit,Bruct,0,0,1,1,Deploy: Remove any number of scrap counters from your commanders. Gets +1/+1 for each counter removed.,
+0,24,Scrap Hound,Unit,Bruct,0,0,2,1,Attack Structure: discard the top 2 cards of your deck.,
+0,25,Shield Golem,Unit,Bruct,0,0,0,4,Armor 1,
+0,196,Stone Myrmidon,Unit,Bruct,0,7,4,4,Armor 2<br>Costs 1 <<!gold>> less for each spell in your discard.,elemental
+0,26,Bandit,Unit,Diablo,0,1,2,2,Attack: Gain 1 <<!gold>>.,
+0,197,Biker Fiend,Unit,Diablo,0,5,5,3,"Discard this from hand, <<!mana>>: Draw 1.<br>Armor 1<br>Deploy: Play any number of Biker Fiends from discard for no cost.",
+0,27,Gilded Guards,Unit,Diablo,0,2,2,2,Enemy units deployed in this lane get -1/-1.,
+0,28,Greedy Wyrm,Unit,Diablo,1,1,2,2,Flying <br>Deploy: gain 2 <<!gold>>.<br>Defeat: Your opponent gains 1 <<!gold>>.,dragon
+0,29,Kobold Crew,Unit,Diablo,0,3,3,3,Pack Tactics +3/+0 <br>Deploy: Any commander called this turn has Haste.,kobold
+0,30,Kobold Kin,Unit,Diablo,0,0,2,1,Pack Tactics +2/+0 ,kobold
+0,198,Kobold King,Unit,Diablo,0,1,2,3,"Pack Tactics (+1/+1, supply <<!gold>> to this lane)<br>Action, discard this from play: the next commander you call this turn costs 3 <<!gold>> less. ",kobold
+0,31,Loyal Imp,Unit,Diablo,1,0,1,1,Flying <br>Deploy: Exile a card that entered your discard this turn.<br>Action: Play that exiled card.,
+0,32,Pirate Crew,Unit,Diablo,0,2,3,3,"Deploy: Discard 1, draw 1. <br>Attack: Gain 1 <<!gold>> and move to <<!target>><b>adjacent lane</b>.",pirate
+0,33,Reckless Spirit,Unit,Diablo,1,0,4,1,Power halved while attacking a structure (round down). <br>After combat: discard this or pay <<!mana>>.,spirit
+0,34,Red Dragon,Unit,Diablo,0,8,8,8,Flying<br>Deploy: Nearby enemy units take 2 damage.,dragon
+0,35,Tengu Freebooter,Unit,Diablo,0,0,1,1,"Flying <br>Deploy: Discard 1, gain 1 <<!gold>>, then you may pay 1 <<!gold>> to draw 1.",pirate
+0,36,Vulture Agents,Unit,Diablo,2,1,3,2,"Deploy: Exile <<!target>><b>nearby enemy unit</b>.<br>Your opponent can 'Action, give you 1 <<!gold>>: Return the exiled unit to play in this lane, silenced until end of turn.'",
+0,37,Zeal Elites,Unit,Diablo,0,1,3,2,Other nearby Zeal units and commanders have +1/+0.,zeal
+0,38,Zeal Grenadier,Unit,Diablo,1,3,3,3,Deploy: Deal 3 damage to <<!target>><b>nearby unit or structure</b>.,zeal
+0,39,Zeal Grunts,Unit,Diablo,0,0,2,1,Attack Structure: Gain 1 <<!gold>>.,zeal
+0,40,Zeal Pair,Unit,Diablo,1,1,2,2,Deploy: Summon a 2/2 zeal token in an adjacent lane.,zeal
+0,41,Dracolich,Unit,Grim,1,5,6,6,Flying <br>Deploy: Enemy units and commanders in <<!target>><b>lane</b> get -1/-1. You may discard 1 to repeat this process.,dragon
+0,42,Elusive Smuggler,Unit,Grim,1,0,2,1,Deploy: Give commanders in this lane Flanking and Infiltrator until end of turn.<br>Turn Start: You may return this to hand.,
+0,43,Fleeting Spirit,Unit,Grim,1,0,2,1,"Flying<br>After combat: Discard this card, you may pay <<!mana>> to draw 1.",spirit
+0,44,Ghoul Tombrobber,Unit,Grim,0,0,2,1,"Action, exile 2 other cards from discard: Play this from discard. ",
+0,45,Haunted Rogue,Unit,Grim,0,1,2,1,"Infiltrator<br>When discarded from play, summon a 1/1 spirit token with flying in a nearby lane. This activates even when defeated.",spirit
+0,46,Necromancer,Unit,Grim,3,0,2,2,"Deploy: Discard <<!target>><b>defeated unit</b>, then exile a unit in any discard and create a token copy of it in this lane.",
+0,47,Rakish Triton,Unit,Grim,1,1,3,1,"Deploy: Discard 1, draw 1, <<!target>><b>nearby enemy</b> gets -1/-1.",pirate
+0,48,Scavenger Squad,Unit,Grim,0,2,3,3,"Deploy: Discard <<!target>><b>up to 3 defeated units in this lane</b>, gain <<!gold>> for each.",
+0,49,Shadow Agents,Unit,Grim,0,5,5,5,"Infiltrator <br>When an enemy structure or commander in this lane is defeated, may move to <<!target>><b>lane.</b><br>When an allied structure or commander is defeated, may move to that lane.",
+0,50,Skeleton Archers,Unit,Grim,0,0,2,1,"Once per turn, discard 1: Gets +1/+1.<br>Has flanking if power is 4 or greater.",
+0,51,Vampire Maid,Unit,Grim,2,2,3,3,"Drain 3<br>Deploy: Search your deck for a card, discard it, shuffle.",
+0,52,Zombie Cat,Unit,Grim,0,0,1,1,"Slow <br>If this would be discarded, play it instead.",
+0,53,Zombie Horde,Unit,Grim,1,1,2,2,Has +3/+3 for each Zombie Horde in your discard.,
+0,54,Zombie Worm,Unit,Grim,1,8,7,7,"Alternative Cost: Exile X cards from discard, every 2 exiled pays for 1 <<!gold>>.<br>Trample",
+0,199,Air Elemental,Unit,Myst,4,0,5,5,Costs <<!mana>> less for each spell played this turn. <br>Flying <br>Turn End: Gets -1/-1.,elemental
+0,55,Blue Dragon,Unit,Myst,1,5,7,7,"Flying<br>Deploy: Deal 3 damage to <<!target>><b>unit</b>, you may pay <<!mana>> to repeat this process.",dragon
+0,56,Dormant Ward,Unit,Myst,1,1,0,5,Armor 1 <br><<!mana>>: Has +3/+0 until end of turn.,
+0,57,Druid,Unit,Myst,1,0,2,2,"Once per turn, pay X <<!mana>>: Heal X to <<!target>><b>unit or structure in this lane</b>.",
+0,58,Dryad,Unit,Myst,1,1,0,4,"Retaliate 1 <br>Turn Start: If undamaged, gain <<!mana>>.",
+0,200,Earth Elemental,Unit,Myst,5,0,6,6,Costs <<!mana>> less for each spell played this turn.<br>Trample<br>On Damaged: Gets -1/-1.,elemental
+0,59,Ent,Unit,Myst,3,0,1,6,Retaliate 3,
+0,60,Fairy Friends,Unit,Myst,0,0,1,1,Flying<br>Once per turn <<!mana>>: Give <<!target>><b>another nearby unit</b> +2/+0 and Flying until end of turn.,
+0,61,Harpy,Unit,Myst,0,2,3,2,"Flying<br>Once per turn, <<!mana>>: Move <<!target>><b>enemy unit</b> one lane closer.",
+0,62,Mana Eater,Unit,Myst,0,0,0,2,Retaliate 1<br>Damaged: Gain <<!mana>> at the start of your next turn.,
+0,63,Rave Rangers,Unit,Myst,1,0,2,2,"Deploy: You may move <<!target>><b>adjacent unit</b> to this lane. If it was allied, Heal 1 to it.",
+0,64,Stubborn Spirit,Unit,Myst,0,0,1,1,Flying <br><<!mana>>: Play this in a lane of your opponent's choosing. Activate this even if this is defeated or in discard.,spirit
+0,65,Totem Warrior,Unit,Myst,0,0,2,1,"When this is discarded during your turn, you may pay <<!mana>><<!mana>>: Gain <<!mana>><<!mana>><<!mana>>.",
+0,66,Vinewhip Beast,Unit,Myst,2,2,4,4,Deploy: Move <<!target>><b>adjacent enemy unit</b> to this lane.<br>Enemy units cannot move from this lane.,
+0,67,Witch,Unit,Myst,0,3,3,3,"Deploy: Summon two 0/1 Newt tokens within nearby lanes. <br>Once per turn, discard a nearby allied unit: Gain <<!mana>>. <br><<!mana>>: Move to <<!target>><b>adjacent lane</b>.",
+0,68,Assassin,Unit,Rula,0,1,3,1,Infiltrator,
+0,69,Ballista,Unit,Rula,0,3,6,2,Action: Has flanking until end of turn.,
+0,70,Buccaneer,Unit,Rula,1,0,2,2,"Deploy: Discard 1, draw 1, deal 1 damage to <<!target>><b>nearby enemy unit</b>.",pirate
+0,71,Caravan,Unit,Rula,0,0,1,2,"Deploy: Supply <<!gold>> to <<!target>><b>nearby lane</b> until end of turn.<br>Action, discard this from play: Move <<!target>><b>allied unit in this lane</b> to <<!target>><b>adjacent lane</b>.",
+0,72,Cavalry,Unit,Rula,0,1,2,2,"Flanking, Training 1",
+0,73,Dragon Prince,Unit,Rula,0,4,3,5,Flying <br>Supply <<!gold>> to nearby lanes.,dragon
+0,74,Duelist,Unit,Rula,0,1,2,2,"Retaliate 2, Training 1",
+0,75,Medic,Unit,Rula,1,0,1,1,Deploy: Heal 1 to <<!target>><b>nearby unit or commander</b>.,
+0,76,Noble Giant,Unit,Rula,2,3,4,5,Trample<br>Other units and commanders in this lane are Silenced.,
+0,77,Reinforcements,Unit,Rula,0,0,2,1,"Deploy: If you have no cards in hand, draw 1.",
+0,78,Royal Knights,Unit,Rula,0,5,5,5,"Flanking, Training 2 <br>Attack: May move to an adjacent lane.",
+0,79,Spearman,Unit,Rula,0,0,2,1,Gets +1/+1 when it moves lanes.,
+0,80,Tactician,Unit,Rula,0,0,1,1,"Deploy: Draw 1, discard 1. <br>Action: Return to hand.",
+0,81,Valkyrie,Unit,Rula,1,2,2,1,"Flying, Flanking <br>Deploy: Return <<!target>><b>defeated allied unit in this lane</b> to hand.",
+0,82,Wyvern Rider,Unit,Rula,1,3,3,3,"Flying, Flanking, Training 1",
+0,83,Mercenary Band,Unit,General,0,1,3,3,,
+0,84,Channel,Spell,Arcan,2,0,0,0,Cantrip <br>Draw 2.,
+0,85,Coalesce,Spell,Arcan,1,0,0,0,Cantrip <br>Gain <<!mana>><<!mana>>.,
+0,86,Polymorph,Spell,Arcan,2,0,0,0,<<!target>><b>Unit or commander</b> is transformed into a 1/1 rabbit.,
+0,87,Simulacrum,Spell,Arcan,3,0,0,0,"Summon a 0/2 commander homunculus token, then you may relinquish a structure and discard 1 to transform it into an undamaged token copy of <<!target>><b>allied commander</b> that gets -1/-1.",
+0,88,Sputter,Spell,Arcan,0,0,0,0,Cantrip<br>Draw 1.,
+0,201,Storm,Spell,Arcan,3,0,0,0,Deal 2 damage to any <<!target>><b>three things</b>.,bolt
+0,89,Summon Familiar,Spell,Arcan,1,0,0,0,Cantrip<br>Summon a 1/1 familiar token.,
+0,90,Warp,Spell,Arcan,1,0,0,0,Move <<!target>><b>unit</b> to a different lane.,
+0,91,Calibrate,Spell,Bruct,1,0,0,0,"Cantrip <br>Draw 2, discard 1.",
+0,92,Create,Spell,Bruct,2,0,0,0,Summon a 0/2 homunculus token in each lane.,
+0,93,Homing Missile,Spell,Bruct,1,0,0,0,"Deal 3 armor piercing damage to <<!target>><b>commander</b>, draw 1.",
+0,94,Magnetize,Spell,Bruct,0,0,0,0,Cantrip <br>Move <<!target>><b>unit</b> to a lane with an active allied commander.,
+0,95,Repair,Spell,Bruct,1,0,0,0,Cantrip <br>Heal 3 to <<!target>><b>structure</b>.,
+0,96,Siege Bolt,Spell,Bruct,3,0,0,0,Deal 4 damage to the frontmost ranks of <<!target>><b>two adjacent lanes.</b>,bolt
+0,97,Transmute,Spell,Bruct,1,0,0,0,"Cantrip<br>Gain 1 <<!gold>>, draw 1.",
+0,98,Bribe,Spell,Diablo,0,1,0,0,Move <<!target>><b>enemy unit or commander</b> to <<!target>><b>adjacent lane</b>.,
+0,99,Dragon's Breath,Spell,Diablo,3,0,0,0,Cantrip<br>Deal 4 damage to enemy units and commanders in <<!target>><b>lane</b>.,dragon
+0,100,Fireball,Spell,Diablo,2,0,0,0,Deal 3 damage to enemy units in <<!target>><b>lane</b>.,
+0,202,Jackpot,Spell,Diablo,3,0,0,0,Costs <<!mana>> less for each defeated structure you control.<br>Double your <<!gold>>.,
+0,101,Spark,Spell,Diablo,1,0,0,0,"Cantrip<br>Deal 1 damage to <<!target>><b>unit</b>, draw 1.",bolt
+0,102,Twin Bolt,Spell,Diablo,1,0,0,0,Deal 1 damage to any <<!target>><b>two things</b>.,bolt
+0,103,Assimilate,Spell,Grim,2,0,0,0,"Exile X (up to 5) cards from discard, deal X damage to <<!target>><b>unit</b>, and heal X to <<!target>><b>unit in that lane</b>.",
+0,104,Consume,Spell,Grim,1,0,0,0,"Cantrip <br>Discard <<!target>><b>defeated allied unit</b>, heal 1 to <<!target>><b>nearby unit</b>.",
+0,105,Disintegrate,Spell,Grim,3,0,0,0,Exile <<!target>><b>anything</b>.,
+0,106,Revive,Spell,Grim,1,0,0,0,Cantrip<br>Return a unit in discard to hand.,
+0,107,Ritual,Spell,Grim,0,0,0,0,Cantrip<br>Additional Cost: Discard an active allied unit.<br>Gain <<!mana>><<!mana>>.,
+0,108,Wither,Spell,Grim,1,0,0,0,"Discard the top 3 cards of your deck, <<!target>><b>unit</b> gets -1/-1.",
+0,109,Awaken,Spell,Myst,3,0,0,0,Additional Cost: Relinquish a structure. <br><<!target>><b>Structure</b> is transformed into a 4/4 Elemental.,
+0,110,Bestow,Spell,Myst,1,0,0,0,"<<!target>><b>Unit</b> gets +3/+3, or <<!target>><b>commander</b> gets +2/+2.",
+0,111,Earthquake,Spell,Myst,5,0,0,0,Deal 5 damage to all enemy units. Enemy structures are silenced until your next turn.,
+0,112,Gate,Spell,Myst,2,0,0,0,Move <<!target>><b>any number of allied units</b> to <<!target>><b>lane</b>.,
+0,113,Heal,Spell,Myst,1,0,0,0,"Rejuvenate <<!target>><b>unit</b>, draw 1.",
+0,114,Rescue,Spell,Myst,1,0,0,0,Cantrip<br>Return <<!target>><b>allied unit</b> to hand.,
+0,115,Wish,Spell,Myst,2,0,0,0,"Search your deck for a card, and put it into your hand.",
+0,116,Command,Spell,Rula,1,0,0,0,"<<!target>><b>Two active units in different lanes</b>. Move one to the other's lane, they have +1/+0 until end of turn.",
+0,117,Embolden,Spell,Rula,1,0,0,0,"Cantrip<br><<!target>><b>unit</b> has +4/+0 until end of turn, or <<!target>><b>commander</b> has +2/+0 until end of turn.",
+0,118,Gust,Spell,Rula,0,0,0,0,Cantrip <br>Move <<!target>><b>allied unit</b> to <<!target>><b>adjacent lane</b>.,elemental
+0,119,Recall,Spell,Rula,1,0,0,0,Return <<!target>><b>unit</b> to hand.,
+0,120,Retreat,Spell,Rula,2,0,0,0,Return <<!target>><b>commander</b> to the standby zone.,
+0,203,Scramble,Spell,Rula,1,0,0,0,"Return <<!target>><b>allied 'Law' commander</b> to standby, then call any other 'Law' commander to that lane.",
+0,121,Grace,Spell,General,2,0,0,0,Rejuvenate all units in <<!target>><b>lane</b>.,
+0,122,Lightning Bolt,Spell,General,0,0,0,0,Deal 3 damage to <<!target>><b>unit or commander</b>.,bolt
+0,123,Leyline Tap,Structure,Arcan,0,0,0,6,The first spell you play each turn costs <<!mana>> less.,
+0,124,Magic School,Structure,Arcan,0,1,0,7,"Turn Start: Reveal the top card of your deck, if it's a spell, put it into your hand.",
+0,125,Junk Yard,Structure,Bruct,0,0,0,6,Turn Start: Discard the top card of your deck.<br>Action 2 <<!gold>>: Put a card discarded this turn into your hand.,
+0,126,Roving Fortress,Structure,Bruct,1,1,1,8,Armor 1 <br>Once per turn: Move to <<!target>><b>adjacent lane with no structures</b> or swap with <<!target>><b>adjacent structure</b>.,
+0,127,Arena,Structure,Diablo,0,0,0,6,"Turn Start: If there is a defeated enemy unit in this lane, gain 1 <<!gold>>.",
+0,128,Tower,Structure,Diablo,0,0,0,6,Allied commanders that arrive in this lane get +1/+1.<br>Once per turn: Move <<!target>><b>allied commander in this lane</b> to <<!target>><b>adjacent lane</b>.,
+0,129,Altar,Structure,Grim,1,1,0,6,"Turn Start, discard <<!target>><b>nearby defeated allied unit</b>, exile 2 cards from discard: Draw 1.",
+0,130,Smugglers' Den,Structure,Grim,0,0,0,6,"Turn Start: You may discard 1 then exile 2 cards from discard to gain 1 .<br>Defeat: Pay X <<!gold>> to return X cards exiled by this card to hand, then discard the rest.<br>Once per turn: Defeat this.",
+0,131,Dyna Grove,Structure,Myst,2,0,0,8,Retaliate 2<br>Turn Start: Gain <<!mana>>.,
+0,132,Shrine,Structure,Myst,0,0,0,6,"Once per turn, 1 <<!gold>>: Gain <<!mana>>.<br>Damaged: Reduce the cost of Shrine's abilities by 1 <<!gold>> next turn.",
+0,133,Royal Palace,Structure,Rula,1,1,0,7,"Supply <<!mana>> and <<!gold>> to this lane. <br>Once per turn, relinquish a structure: Supply <<!mana>> and <<!gold>> to adjacent lanes until end of turn.",
+0,134,Turret,Structure,Rula,1,0,1,6,<<!mana>>: +1/+0 until end of turn.,
+0,135,Armory,Structure,General,0,0,0,6,Allied units in this lane have +1/+1.,
+0,136,Bank,Structure,General,0,0,0,5,Turn Start: Add 1 <<!gold>> to this.<br>Action: Take all <<!gold>> from this.,
+0,137,Barbed Wire,Structure,General,0,1,0,6,"Defender, Retaliate 2.",
+0,138,Dungeon,Structure,General,0,0,0,6,"Retaliate 1<br>Defeat: Next turn, collect in this lane as if active.",
+0,139,Garden,Structure,General,0,1,0,5,Turn Start: Choose 1.<br>- Gain <<!mana>>.<br>- Exile the top card of your deck.<br>- Put a card exiled with Garden into your hand.,
+0,140,Guildhall,Structure,General,0,0,0,6,"Once per turn, Choose 1:<br>- Pay <<!mana>>: gain 1 <<!gold>>. <br>- Pay <<!gold>>: gain <<!mana>>.",
+0,141,Laboratory,Structure,General,1,0,0,7,"Turn Start: Draw 1, discard 1.",
+0,142,Library,Structure,General,0,0,0,6,Action <<!mana>>: Draw 1.,
+0,143,Market,Structure,General,0,1,0,5,Turn Start: Choose one <br>- Gain 1 <<!gold>> <br>- 2 <<!gold>>: Draw 1<br>- Discard 1: Gain 3 <<!gold>>,
+0,144,Teleporter,Structure,General,1,0,0,6,"Action: Move <<!target>><b>allied unit</b> to this lane, or from this lane to any <<!target>><b>lane</b>.",
+0,145,Wall,Structure,General,0,0,0,12,,
+0,146,Dragon Hoard,Structure,Tag,0,0,0,7,"Damaged: Your opponent gains 1 <<!gold>>, and your dragons cost <<!gold>> and <<!mana>> less next turn.",dragon
+0,147,Kobold Mountain,Structure,Tag,0,0,0,7,Damaged: Summon a 1/1 Kobold token with 'Pack Tactics +1/+0' in a nearby lane.,kobold
+0,148,Pirate Ship,Structure,Tag,1,2,0,4,"The first time you discard in a turn: +3/+0 until end of turn. <br>Turn End: Move <<!right>>. If you cannot, flip the direction of the arrow and repeat the process (<<!right>> flips to <<!left>> and vice versa).",pirate
+0,149,Séance Circle,Structure,Tag,2,0,0,13,"Nearby allied spirit units have +1/+1.<br>Action, discard a unit: Summon a 1/1 spirit token with flying in a nearby lane.<br>You cannot play non-spirit units in nearby lanes, this effect persists after defeat.",spirit
+0,150,Ale,Commander,Arcan,1,1,4,4,"Arrive: Return a spell in discard to hand.<br>Once per turn, after you play a spell with <<!mana>> base cost: You may play it again.",
+0,151,Aradin,Commander,Arcan,1,0,3,3,"Arrive: Reveal the top 6 cards of your deck, put up to 2 revealed spells into your hand then shuffle. <br>Once per turn, discard 1: Return a spell in discard to hand.",
+0,152,Ninlil,Commander,Arcan,0,0,3,4,Flying <br>Your bolt spells deal double damage.,bolt
+0,153,Odin,Commander,Arcan,0,0,3,3,"Flying<br>Arrive: Look at the top 4 cards of your deck, discard any number, and put the rest back in any order. <br>Action <<!mana>><<!mana>>: Return Odin to standby, return <<!target>><b>unit in this lane</b> to hand.",
+0,154,Rodrigo,Commander,Arcan,0,0,3,3,"Spell Surge: Deal 1 damage to enemy units and commanders in this lane, draw 1, discard 1.",
+0,155,Selene,Commander,Arcan,0,0,4,4,"Arrive: If you have 1 or less cards in hand, search your deck for a spell, put it into your hand, then shuffle. <br>After you cast a spell that targeted Selene, you may move her to <<!target>><b>nearby lane</b>. Then deal damage equal to her power to the frontmost rank of that lane.",
+0,156,Stranger,Commander,Arcan,2,0,5,5,"Spell Surge: Exile the top card of each deck, deal 1 damage to <<!target>><b>nearby enemy unit or commander</b>. <br>Action, relinquish a commander, <<!mana>><<!mana>>: Summon the relinquished commander transformed as an undamaged copy of Stranger.<br>Turn End: If you have 3+ active 'Stranger' commanders and 40+ cards are exiled, you win the game. ",
+0,157,B,Commander,Bruct,0,0,2,4,"Armor 3 <br>Once per turn, <<!mana>>: Taunt <<!target>><b>nearby enemy unit</b> until the start of your next turn.",
+0,158,Egnis,Commander,Bruct,0,0,2,2,"Scrap Collector<br>Call: Exile a token copy of <<!target>><b>allied unit</b> as a schematic.<br>Arrive: Summon a token copy of the schematic in this lane.<br>Action, remove X scrap, 6-X <<!gold>>: Summon a token copy of the schematic in a nearby lane.",kobold
+0,159,Fulton,Commander,Bruct,0,0,4,5,Scrap Collector<br>Retaliate (scrap)<br>Remove 2 scrap: Gets +1/+1.,
+0,160,Maach,Commander,Bruct,0,0,1,4,"Flanking, Scrap Collector.<br>Has +1/+0 per scrap.<br>Remove 2 scrap: The next spell you play this turn has Cantrip.",
+0,161,Maya,Commander,Bruct,0,0,1,2,"Flying, Scrap Collector<br>You may reduce incoming damage to Maya by removing 1 scrap per damage <br>Action, remove all scrap: Deal 3 damage per scrap removed to the frontmost rank of <<!target>><b>lane</b>.",pirate
+0,162,V,Commander,Bruct,0,0,3,5,"Retaliate 1, Defender<br>V Has Defender for adjacent lanes.<br>Damaged: Gets +1/+1.",
+0,163,Veefur,Commander,Bruct,0,1,1,1,"Arrive: Discard the top 3 cards of your deck. <br>Once per turn, exile a unit from discard, <<!mana>>: Veefur transforms into a copy of that unit until your next turn.",
+0,164,Asline,Commander,Diablo,0,0,4,4,Armor 2 <br>Allied units in this lane have +1/+0.,zeal
+0,165,Bedi,Commander,Diablo,0,0,4,4,"Once per turn, take 1 damage: Has +1/+0 and flanking until the end of turn <br><<!mana>>: Deal 1 armor piercing damage to <<!target>><b>anything</b>.",zeal
+0,166,Carlius,Commander,Diablo,0,0,4,4,Arrive: Rejuvenate nearby allied zeal units and commanders.,zeal
+0,167,Nico,Commander,Diablo,0,0,2,3,"Flying, Flanking<br>Defeat: Gets +1/+1, and you may relinquish a structure to rejuvenate Nico.",
+0,168,Obedience,Commander,Diablo,0,0,4,3,Armor 2 <br>Can always attack the commander rank. <br><<!mana>>: Deal 1 damage to <<!target>><b>anything</b>.,zeal
+0,169,Vasana,Commander,Diablo,0,5,8,8,Flying <br>Arrive: Deal 1 damage to all enemy units.,dragon
+0,170,Victor,Commander,Diablo,1,3,4,4,"Call: Defeat all enemy units in this lane, gain <<!gold>> for each. <br><<!mana>>: Spells cannot affect units or commanders in this lane until your next turn.",
+0,171,Althokha,Commander,Grim,0,1,4,4,"Arrive: Defeat <<!target>><b>enemy unit in this lane</b>. <br>Action, discard a defeated enemy unit in this lane: Gets +1/+1 and has flanking until end of turn.",
+0,172,Haulf-Dan,Commander,Grim,0,0,3,6,"Arrive: Nearby enemy units are silenced until your next turn.<br>Once per turn, exile a card from discard: <<!target>><b>Nearby allied unit</b> gets +1/+1.",
+0,173,Kai,Commander,Grim,0,0,4,4,"Drain 1<br>Action, lose 2 HP, <<!mana>>: Summon a 4/1 shadow token in a nearby lane.",
+0,174,Kornelius,Commander,Grim,1,0,4,3,Flying<br>Arrive: Return up to 2 cards in discard to hand.<br>Action <<!mana>><<!mana>>: Exile <<!target>><b>any number of defeated units and commanders</b>. Has +1/+1 for each until end of turn.,
+0,175,Reese,Commander,Grim,0,0,2,4,"Arrive: Gain <<!mana>>, discard 1, draw 1.<br>Exile a unit from your discard pile, <<!mana>>: Summon a 1/1 spirit token with flying within nearby lanes.",spirit
+0,176,Stray,Commander,Grim,0,0,3,4,"Enemy units in this lane have Slow. <br><<!mana>><<!mana>>: Exile <<!target>><b>unit or commander that hasn't arrived yet in this lane</b>. <br>Action, relinquish a structure:  Stray's abilites affect nearby lanes until your next turn.",
+0,177,Vakai,Commander,Grim,0,0,3,3,Discard 1: Rejuvenate Vakai. You can activate this even if Vakai is defeated.,
+0,178,Atheen,Commander,Myst,0,0,0,6,"Arrive: Move <<!target>><b>any number of allied units</b> to this lane, or move <<!target>><b>any number of allied units in this lane</b> to <<!target>><b>lane</b>. <br><<!mana>>: <<!target>><b>Allied unit in this lane</b> gets +1/+1.<br><<!mana>>: Silence <<!target>><b>nearby enemy commander</b> until your next turn. <br>At end of turn, pay <<!mana>> or return Atheen to standby. <br>Defeat: Return Atheen to standby.",
+0,179,Eirini,Commander,Myst,0,0,4,4,Arrive: Gain <<!mana>>.<br>Once per turn: Move to <<!target>><b>adjacent lane</b>.<br><<!mana>>: Nearby commanders have +1/+0 until the end of the turn.,
+0,180,Kriv,Commander,Myst,0,0,2,4,"Flying<br>Arrive: Create a token copy of Kriv in <<!target>><b>adjacent lane with no allied commanders</b>.<br>Action, <<!mana>>: Swap with <<!target>><b>another active allied commander</b> and, if this isnt a token, Arrive.",
+0,181,Luupo,Commander,Myst,1,0,1,3,"Arrive: Rejuvenate allied units in this lane, and they have +2/+0 until end of turn.<br>Action <<!mana>>: Heal 1 to <<!target>><b>nearby unit</b>, and it gets +1/+1.",
+0,182,Palmera,Commander,Myst,0,1,3,6,Arrive: Gain <<!mana>><<!mana>>.<br>Action <<!mana>><<!mana>>: Deal 4 damage to the frontmost rank of <<!target>><b>nearby lane</b>.,
+0,183,Saene,Commander,Myst,0,0,5,3,Arrive: Move <<!target>><b>any number of nearby allied units</b> to nearby lanes.<br>Once per turn: Move to <<!target>><b>adjacent lane</b>.<br><<!mana>>: Get +1/+0 until end of turn.,
+0,184,Teddy,Commander,Myst,0,0,3,3,"Teddy is unaffected by spells.<br>Once per turn, 1 <<!gold>>: Teddy gets +1/+1 and <<!target>><b>nearby enemy unit</b> is transformed into a 1/1 rabbit until your next turn.",
+0,185,Alexander,Commander,Rula,1,2,5,5,Haste<br>Action: Move to <<!target>><b>lane with an enemy unit or commander with at least 4 remaining HP</b>.,
+0,186,Chariot,Commander,Rula,1,0,5,4,Flanking <br>Arrive: Rejuvenate <<!target>><b>nearby allied commander</b>.,
+0,187,Law (Base),Commander,Rula,1,0,3,6,"Rule of Law. <br>Flying, Defender",
+0,188,Law (Beast),Commander,Rula,1,0,6,5,Rule of Law. <br>Armor 2,
+0,189,Law (Cat),Commander,Rula,1,0,4,4,Rule of Law. <br>Haste,
+0,190,Law (Snake),Commander,Rula,1,0,3,2,"Rule of Law. <br>Arrive: Move <<!target>><b>any number of enemy units or commanders in this lane</b> to an adjacent lane, and they each get -1/-1. <br>Spell Surge: Arrive.",
+0,191,Law (Sword),Commander,Rula,1,0,7,3,Rule of Law. <br>Action <<!mana>>: Negate the next source of damage Law takes before your next turn.,
+0,192,Lufin,Commander,Rula,0,0,2,5,Arrive: Allied units and structures in this lane Heal 1. <br>Action <<!mana>>: Move <<!target>><b>nearby allied unit</b> to <<!target>><b>another nearby lane</b> and it gets +1/+1.,
+0,193,Reshi,Commander,Rula,0,0,3,4,"Infiltrator <br>Attack Structure: draw 1, and your opponent reveals their hand.",
+0,194,Sindri,Commander,Rula,0,1,3,5,Arrive: Summon a 2/2 dwarf token in two nearby lanes.<br>Once per turn <<!mana>>: Heal 1 to <<!target>><b>nearby structure</b>.,

@@ -4,7 +4,7 @@ import { createTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import 'bootstrap/dist/css/bootstrap.css';
 import '/src/App.css';
-import $, { each } from 'jquery';
+import $ from 'jquery';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -30,7 +30,9 @@ import reactStringReplace from 'react-string-replace';
 import Card from '/src/Card.jsx'
 import TooltipShell from '/src/TooltipShell.jsx'
 import FlexFilter from './FlexFilter';
+import FlexContainer from './FlexContainer';
 import CardTableView from './CardTableView';
+import CardGridView from './CardGridView';
 import CustomCount from './CustomCount';
 function App() {
     const [csv_data, setCsvData] = useState([[]]);
@@ -47,6 +49,7 @@ function App() {
     const [selected_types, setSelectedTypes] = useState([]);
     const [selected_tags, setSelectedTags] = useState([]);
     const [current_version, setCurrentVersion] = useState(true);
+    const [active_tab, setActiveTab] = useState(localStorage.getItem("tab") ?? "card");
     const gallery = Object.values(import.meta.glob('/AU_Card_Images/*.png', { eager: true, query: '?url', import: 'default' }));
     const inline_images = { "mana": mana, "gold": gold, "left": left, "right": right, "target": target };
     const theme = createTheme({
@@ -75,18 +78,18 @@ function App() {
     };
     const getID = function (row, _header_lookup) {
         _header_lookup = _header_lookup ?? header_lookup;
-        return row[_header_lookup["name"]];
+        return row[_header_lookup["ID"]];
     }
     const getIDFromImg = function (src) {
-        let filename = src.substring(src.lastIndexOf("/")+1);
+        let filename = src.substring(src.lastIndexOf("/") + 1);
         let start = filename.indexOf("_") + 1;
-        let end = start + filename.substring(start + 1).indexOf("_")+1;
+        let end = start + filename.substring(start + 1).indexOf("_") + 1;
         return decodeURI(filename.substring(start, end));
     }
     const getImg = function (id) {
-        return img_dict[(id ?? "")
-            .replace(/[\(\)']/g, "") // remove parentheses
-            .normalize('NFD').replace(/[a-z][\u0300-\u036f]/g, '') // remove accented letters
+        return img_dict[(id ?? -1)
+            //.replace(/[\(\)']/g, "") // remove parentheses
+            //.normalize('NFD').replace(/[a-z][\u0300-\u036f]/g, '') // remove accented letters
         ];
     }
 
@@ -243,7 +246,7 @@ function App() {
                     for (var j = 0; j < _headers.length - 1; j++) {
                         if (new_data[j] != null)
                             tarr.push((new_data[j] ?? "").replace(/(\s)/g, " "));
-                    } 
+                    }
                     if (_data_dict[getID(tarr, _header_lookup)])
                         _data_dict[getID(tarr, _header_lookup)][header_lookup["Count"]] = tarr[_header_lookup["Count"]];
                 }
@@ -257,11 +260,22 @@ function App() {
                 updateFilters(_csv_data);
                 updateDecklist(_csv_data);
             }
-  
+
         } catch (e) {
             console.log(e);
             alert("Error reading CSV");
         }
+    }
+    function choose_file(e) {
+        let _file = e.target.files[0];
+        let _form = e.target;
+        const reader = new FileReader();
+        reader.onload = (e2) => {
+            load_csv(e2.target.result);
+            $("#filename").val(_file.name.substring(0, _file.name.lastIndexOf(".")));
+            _form.value = null;
+        };
+        reader.readAsText(_file);
     }
     function format_cell(value, index, row, whitespace) {
         whitespace = whitespace ?? String.fromCharCode(160);
@@ -282,16 +296,11 @@ function App() {
             case header_lookup["name"]:
                 try {
                     return (
-                        <OverlayTrigger key={`trigger-${index}-${value}`} placement="auto" trigger={['hover', 'focus']} overlay={
-                            <Popover key={`popover-${index}-${value}`} >
-                                <Popover.Body key={`popover.body-${index}-${value}`} >
-                                    <Image key={`popover.image-${index}-${value}`} style={{ maxWidth: "100%" }} src={getImg(getID(row))} />
-                                </Popover.Body>
-                            </Popover>
-                            }
-                        >
-                            <div key={`name-${index}-${value}`} style={{ height: "100%", display: "flex", alignItems: "center" }}>{value.replace(/\s/g, whitespace)}</div>
-                        </OverlayTrigger>
+                        <TooltipShell
+                            key={`trigger-${index}-${value}`}
+                            body={<Image key={`popover.image-${index}-${value}`} style={{ maxWidth: "100%" }} src={getImg(getID(row))} />}
+                            content={<div key={`name-${index}-${value}`} style={{ height: "100%", display: "flex", alignItems: "center" }}>{value.replace(/\s/g, whitespace)}</div>}
+                        />
                     )
                 } catch (e) {
                     console.log(e);
@@ -337,7 +346,7 @@ function App() {
                     else {
                         return <div key={`manadiv-${index}`} className="numeric">{value}&nbsp;<Image key={`mana-${index}-${value}`} style={{ "maxHeight": "20px" }} src={mana} /></div>
                     }
-               
+
                 } catch (e) {
                     console.log(e);
                     return errorText("Error");
@@ -360,7 +369,7 @@ function App() {
                 }
                 break;
             case header_lookup["health"]:
-                try { 
+                try {
                     return (value > 0) ? <div className="numeric" key={`health-${index}-${value}`} >{value}&nbsp;{String.fromCodePoint(0x1F6E1)}</div> : "";
                 } catch (e) {
                     console.log(e);
@@ -399,23 +408,27 @@ function App() {
                 dataType: "text",
                 success: load_csv
             });
-            
+
         }
     }, []);
 
+    // Set up filters
     useEffect(updateFilters, [selected_factions, selected_types, selected_tags]);
-    let cards_in_row = Math.min(3 + Math.floor(4 / 3 * getBreakpointIndex()), 8);
-    let preview_cards_in_row = Math.min(2 * getBreakpointIndex() + (getBreakpointIndex() < 3 ? 6 : 2), 10);
+
+    // determine number of cards that can comfortably fit in a row
+    let img_grid_row_size = Math.min(3 + Math.floor(4 / 3 * getBreakpointIndex()), 8);
+    let preview_grid_row_size = Math.min(2 * getBreakpointIndex() + (getBreakpointIndex() < 3 ? 6 : 2), 10);
 
     return (
-        <div style={{padding: "2%"} }>
-            <div>
-                <h1>AU Deckbuilder</h1>
-                <hr className="hr" />
-            </div>
-            <Container className="outerContainer" fluid>
-                <Row>
-                    <Col md={12} lg={5}>
+        <div style={{ padding: "2%" }}>
+            <h1>AU Deckbuilder</h1>
+            <hr className="hr" />
+            <FlexContainer
+                className="outerContainer"
+                md={12}
+                lg={[5, 7]}
+                elements={[
+                    (<>
                         <h2>Instructions</h2>
                         <ul>
                             <li key="1">Import a CSV or <a href="#table">scroll down to the table</a> to get started!</li>
@@ -427,182 +440,150 @@ function App() {
                         <hr className="hr" />
 
                         <h2>Helpful Links</h2>
-                        <Container fluid>
-                            <Row>
-                                <Col>
-                                    <Button variant="outline-info" className="linkbtn" size="lg" href="https://docs.google.com/document/d/1ugf1jPtwdqVR7T10WZrzN0rqWBDUZOmKxP2Rj-eh0O4/edit?usp=sharing" target="_blank">Game&nbsp;Rules</Button>
-                                </Col>
-                                <Col>
-                                    <Button variant="outline-info" className="linkbtn" size="lg" href="https://steamcommunity.com/sharedfiles/filedetails/?id=3252480722" target="_blank">Game&nbsp;Board</Button>
-                                </Col>
-                                <Col>
-                                    <Button variant="outline-info" className="linkbtn" size="lg" href={defaultCSV}>CSV&nbsp;Template</Button>
-                                </Col>
-                            </Row>
-                        </Container>
+                        <FlexContainer
+                            elements={[
+                                (<Button variant="outline-info" className="linkbtn" size="lg" href="https://docs.google.com/document/d/1ugf1jPtwdqVR7T10WZrzN0rqWBDUZOmKxP2Rj-eh0O4/edit?usp=sharing" target="_blank">Game&nbsp;Rules</Button>),
+                                (<Button variant="outline-info" className="linkbtn" size="lg" href="https://steamcommunity.com/sharedfiles/filedetails/?id=3252480722" target="_blank">Game&nbsp;Board</Button>),
+                                (<Button variant="outline-info" className="linkbtn" size="lg" href={defaultCSV}>CSV&nbsp;Template</Button>)
+                            ]}
+                        />
 
                         <hr className="hr" />
 
                         <h2>Load CSV</h2>
                         <Stack direction="horizontal" gap={1}>
                             <div className="px-1" style={{ width: "100%" }}>
-                                <Button variant="outline-primary" as="label" size="lg" style={{ width: "100%", height: "100%" }}>Choose&nbsp;File...
-                                <Form.Control id="file_input" size="lg" name="file" type="file" style={{ display: "none" }} accept=".csv"
-                                    onChange={function (e) {
-                                        let _file = e.target.files[0];
-                                        let _form = e.target;
-                                        const reader = new FileReader();
-                                        reader.onload = (e2) => {
-                                            load_csv(e2.target.result);
-                                            $("#filename").val(_file.name.substring(0, _file.name.lastIndexOf(".")));
-                                            _form.value = null;
-                                        };
-                                        reader.readAsText(_file);
-                                    }}
-                                />
-                            </Button>
-                                
+                                <Button variant="outline-primary" as="label" size="lg" style={{ width: "100%" }}>
+                                    Choose&nbsp;File...
+                                    <Form.Control id="file_input" size="lg" type="file" style={{ display: "none" }} accept=".csv"
+                                        onChange={choose_file}
+                                    />
+                                </Button>
                             </div>
-
                             <div className="vr" />
-
                             <div className="px-1">
                                 <TooltipShell placement="auto" header="Modify Card Details"
                                     body={(<>Keep this dark to update your deck to the latest version of AU!</>)}
-                                    content={(<Button as="label" size="lg" variant="outline-warning" className="togglebtn" active={!current_version}>{(current_version ? "Update Deck" : "Don't Update").replace(/\s/g, String.fromCharCode(160))}
-                                        <Form.Check id="currentversioncheckbox" size="lg" name="checkBox" type="checkbox" checked={!current_version} style={{ display: "none" }}
-                                            onChange={(e) => { setCurrentVersion(!e.target.checked); }} />
-                                    </Button>)}
+                                    content={(
+                                        <Button as="label" size="lg" variant="outline-warning" className="togglebtn" active={!current_version}>
+                                            {(current_version ? "Update Deck" : "Don't Update").replace(/\s/g, String.fromCharCode(160))}
+                                            <Form.Check id="currentversioncheckbox" size="lg" type="checkbox"
+                                                checked={!current_version} style={{ display: "none" }}
+                                                onChange={(e) => setCurrentVersion(!e.target.checked)}
+                                            />
+                                        </Button>
+                                    )}
                                 />
                             </div>
                         </Stack>
-                        
+
                         <hr className="hr" />
                         <TooltipShell placement="top-start" header="Filters"
                             body={(<>Use these to find cards that meet certain criteria.</>)}
                             content={(<h2>Filters</h2>)}
                         />
-                        <Container fluid className="filterContainer">
-                            <Row>
-                                <Col xl={4} lg={12} md={4} sm={4} xs={12}>
-                                    <TooltipShell placement="top-start" header="Factions"
-                                        body={(<ul>
+                        <FlexContainer className="filterContainer"
+                            xl={4} lg={12} md={4} sm={4} xs={12}
+                            elements={[
+                                (<FlexFilter
+                                    option_list={faction_list}
+                                    selected_options={selected_factions}
+                                    set_selected_options={setSelectedFactions}
+                                    header_label="Faction"
+                                    tooltip_placement="top-start"
+                                    tooltip_header="Factions"
+                                    tooltip_body={(
+                                        <ul>
                                             <li>A deck can have up to two factions/tags.</li>
                                             <li>You can play any card that matches one of your factions/tags.</li>
                                             <li>Cards labelled "General" can be played in any deck.</li>
                                             <li>Cards labelled "Tag" can only be played if it matches one of your deck's tags.</li>
-                                        </ul>)}
-                                        content={(<Button className="headerbtn" size="lg" variant="outline-light">Faction</Button>)}
-                                    />
-                                    <FlexFilter option_list={faction_list} selected_options={selected_factions} set_selected_options={setSelectedFactions} />
-
-                                </Col>
-                                <Col xl={4} lg={12} md={4} sm={4} xs={12}>
-                                    <TooltipShell placement="top" header="Card Types"
-                                        body={(<>A deck has exactly 40 units/spells, 6 structures, and 3 commanders (unless a card states otherwise; e.g. Rule of Law).</>)}
-                                        content={(<Button className="headerbtn" size="lg" variant="outline-light">Type</Button>)}
-                                    />
-                                    <FlexFilter option_list={type_list} selected_options={selected_types} set_selected_options={setSelectedTypes} />
-                                </Col>
-                                <Col xl={4} lg={12} md={4} sm={4} xs={12}>
-                                    <TooltipShell placement="top-end" header="Tags"
-                                        body={(<ul>
+                                        </ul>
+                                    )}
+                                />),
+                                (<FlexFilter
+                                    option_list={type_list}
+                                    selected_options={selected_types}
+                                    set_selected_options={setSelectedTypes}
+                                    header_label="Type"
+                                    tooltip_placement="top"
+                                    tooltip_header="Card Types"
+                                    tooltip_body={(<>A deck has exactly 40 units/spells, 6 structures, and 3 commanders (unless a card states otherwise; e.g. Rule of Law).</>)}
+                                />),
+                                (<FlexFilter
+                                    option_list={tag_list}
+                                    selected_options={selected_tags}
+                                    set_selected_options={setSelectedTags}
+                                    header_label="Tags"
+                                    tooltip_placement="top-end"
+                                    tooltip_header="Tags"
+                                    tooltip_body={(
+                                        <ul>
                                             <li>A deck can have up to two factions/tags.</li>
                                             <li>You can play any card that matches one of your factions/tags.</li>
-                                        </ul>)}
-                                        content={(<Button className="headerbtn" size="lg" variant="outline-light">Tag</Button>)}
-                                    />
-                                    <FlexFilter option_list={tag_list} selected_options={selected_tags} set_selected_options={setSelectedTags} />
-                                </Col>
-                            </Row>
-                        </Container>
-
+                                        </ul>
+                                    )}
+                                />)
+                            ]}
+                        />
                         <hr className="hr" />
 
                         <h2>Downloads</h2>
-                        <ButtonGroup style={{width: "100%"} }>
+                        <ButtonGroup style={{ width: "100%" }}>
                             <FloatingLabel controlId="filename" label="File Name" style={{ width: "100%" }}>
                                 <Form.Control placeholder="File Name" size="lg" type="text" />
                             </FloatingLabel>
-                            <div className="vr"></div>
                             <TooltipShell placement="top-end" header="Save as CSV"
                                 body="Save as a CSV to load it back into this tool later!"
                                 content={(<Button style={{ alignSelf: "stretch" }} variant="outline-primary" size="lg" onClick={downloadCSV}>CSV</Button>)}
                             />
-                            <div className="vr"></div>
                             <TooltipShell placement="top-end" header="PNG Export"
                                 body="Export this as a PNG to import it into Tabletop Simulator!"
                                 content={(<Button style={{ alignSelf: "stretch" }} variant="outline-primary" size="lg" onClick={downloadImage}>PNG</Button>)}
                             />
                         </ButtonGroup>
-
-                    </Col>
-                    <Col md={12} lg={7}>
+                    </>),
+                    (<>
                         <h2>Preview</h2>
-                        <Table size="sm" id="preview_table">
-                            <tbody>
-                                {Array.from(Array(Math.ceil(60 / preview_cards_in_row)).keys()).map((index1, row) => (
-                                    <tr key={index1}>
-                                        {Array.from(Array(preview_cards_in_row).keys()).map((index2, col) => (getImg(decklist[row * preview_cards_in_row + col]) != null) ?
-                                            (
-                                                <td key={index2}>
-                                                    <Card
-                                                        src={getImg(decklist[row * preview_cards_in_row + col])}
-                                                        count={data_dict[decklist[row * preview_cards_in_row + col]][header_lookup["Count"]]}
-                                                        updateCount={updateCount}
-                                                        name={decklist[row * preview_cards_in_row + col]}
-                                                        max={(["Commander", "Structure"].includes(data_dict[decklist[row * preview_cards_in_row + col]][header_lookup["type"]])) ? 1 : 3}
-                                                        size="sm"
-                                                    />
-                                                </td>
-                                            )
-                                            :
-                                            (<td key={index2}><Image style={{ maxWidth: "100%" }} src={spacer} /></td>)
-                                        )}
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </Table>
+                        <CardGridView table_id="preview_table" maxCards={60} row_size={preview_grid_row_size} model={decklist} getID={getID}
+                            data_dict={data_dict} size="sm" updateCount={updateCount} header_lookup={header_lookup} getImg={getImg}
+                        />
                         <canvas id="final_output" width="7500" height="6300" hidden />
-                    </Col>
-                </Row>
-            </Container>
-
+                    </>)
+                ]}
+            />
             <hr className="hr" />
             <Tabs
                 id="table"
-                defaultActiveKey="card"
+                defaultActiveKey={active_tab}
                 className="mb-3"
                 justify
+                onSelect={(_ak) => {
+                    setActiveTab(_ak);
+                    localStorage.setItem("tab", _ak);
+                }}
             >
-                <Tab title="Cards : Grid View" eventKey="card">
-                    <Table size="sm">
-                        <tbody>
-                            {Array.from(Array(Math.ceil(filtered_csv_data.length / cards_in_row)).keys()).map((index1, row) => (
-                                <tr key={index1}>
-                                    {Array.from(Array(cards_in_row).keys()).map((index2, col) => (getImg(getID(filtered_csv_data[row * cards_in_row + col] ?? []) ?? "") != null) ?
-                                        (
-                                            <td key={index2}>
-                                                <Card
-                                                    src={getImg(getID(filtered_csv_data[row * cards_in_row + col]))}
-                                                    count={filtered_csv_data[row * cards_in_row + col][header_lookup["Count"]]}
-                                                    updateCount={updateCount}
-                                                    name={getID(filtered_csv_data[row * cards_in_row + col])}
-                                                    max={(["Commander", "Structure"].includes(filtered_csv_data[row * cards_in_row + col][header_lookup["type"]])) ? 1 : 3}
-                                                    size="lg"
-                                                />
-                                            </td>
-                                        )
-                                        :
-                                        (<td key={index2}><Image style={{ maxWidth: "100%" }} src={spacer} /></td>)
-                                    )}
-                                </tr>
-                            ))}
-                        </tbody>
-                    </Table>
+                <Tab title="Card Images" eventKey="card">
+                    <CardGridView
+                        table_id="allcards_table"
+                        model={filtered_csv_data}
+                        row_size={img_grid_row_size}
+                        header_lookup={header_lookup}
+                        updateCount={updateCount}
+                        getImg={getImg}
+                        getID={getID}
+                        size="lg"
+                    />
                 </Tab>
-                <Tab title="Cards : Table View" eventKey="table">  {/*style={{ overflowX: "auto", scrollBehavior: "smooth" }}>*/}
-                    <CardTableView filtered_csv_data={filtered_csv_data} getBreakpointIndex={getBreakpointIndex} headers={headers} header_lookup={header_lookup} format_cell={format_cell} getID={getID} />
+                <Tab title="Card Details" eventKey="table">
+                    <CardTableView
+                        filtered_csv_data={filtered_csv_data}
+                        headers={headers}
+                        header_lookup={header_lookup}
+                        format_cell={format_cell}
+                        breakpoint_index={getBreakpointIndex()}
+                        getID={getID}
+                    />
                 </Tab>
             </Tabs>
         </div>

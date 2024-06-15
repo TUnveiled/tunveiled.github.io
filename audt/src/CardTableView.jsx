@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import React from 'react';
 import Table from 'react-bootstrap/Table';
-import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 
 function CardTableView(props) {
     const [tablescale, setTablescale] = useState(1);
@@ -9,39 +8,16 @@ function CardTableView(props) {
     const table = useRef(null);
     const outer_div = useRef(null);
     let filtered_csv_data = props.filtered_csv_data;
-    let breakpointIndex = props.getBreakpointIndex();
+    let breakpointIndex = props.breakpoint_index;
     let headers = props.headers;
     let header_lookup = props.header_lookup
     let format_cell = props.format_cell;
     let getID = props.getID;
-
     let transform_style = {
         transition: "transform",
         transformOrigin: "0 0",
         transform: `scale(${tablescale})`
     }
-
-    function updateZoomBounds() {
-        if (breakpointIndex > 1) {
-            setTablescale(1);
-            setOuterHeight("fit-content")
-        }
-        else if (table != null && outer_div != null) {
-            setTablescale(outer_div.current.offsetWidth / table.current.offsetWidth);
-            setOuterHeight(`${table.current.offsetHeight * outer_div.current.offsetWidth / table.current.offsetWidth}px`);
-        }
-
-    }
-
-    useEffect(() => {
-        if (!table.current || !outer_div.current) return;
-        const tableObserver = new ResizeObserver(updateZoomBounds);
-        const divObserver = new ResizeObserver(updateZoomBounds);
-        tableObserver.observe(table.current);
-        divObserver.observe(outer_div.current);
-        return () => { tableObserver.disconnect(); divObserver.disconnect(); } // clean up 
-    }, []);
-    
     function getHeader() {
         switch (breakpointIndex) {
             case 0:
@@ -102,7 +78,6 @@ function CardTableView(props) {
                 break;
         }
     }
-
     function getBody() {
         switch (breakpointIndex) {
             case 0:
@@ -176,6 +151,26 @@ function CardTableView(props) {
                 break;
         }
     }
+    function updateZoomBounds() {
+        if (breakpointIndex > 1) {
+            setTablescale(1);
+            setOuterHeight("fit-content")
+        }
+        else if (table != null && outer_div != null) {
+            setTablescale(outer_div.current.offsetWidth / table.current.offsetWidth);
+            setOuterHeight(`${table.current.offsetHeight * outer_div.current.offsetWidth / table.current.offsetWidth}px`);
+        }
+
+    }
+
+    useEffect(() => {
+        if (!table.current || !outer_div.current) return;
+        const tableObserver = new ResizeObserver(updateZoomBounds);
+        const divObserver = new ResizeObserver(updateZoomBounds);
+        tableObserver.observe(table.current);
+        divObserver.observe(outer_div.current);
+        return () => { tableObserver.disconnect(); divObserver.disconnect(); } // clean up 
+    }, []);
 
     return (
         <div style={{ width: "100%", overflowX: "auto", overflowY: "hidden", height: outer_height }} ref={outer_div}>
