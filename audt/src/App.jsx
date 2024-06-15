@@ -30,7 +30,8 @@ import reactStringReplace from 'react-string-replace';
 import Card from '/src/Card.jsx'
 import TooltipShell from '/src/TooltipShell.jsx'
 import FlexFilter from './FlexFilter';
-
+import CardTableView from './CardTableView';
+import CustomCount from './CustomCount';
 function App() {
     const [csv_data, setCsvData] = useState([[]]);
     const [filtered_csv_data, setFilteredCsvData] = useState([[]]);
@@ -65,7 +66,7 @@ function App() {
         useMediaQuery('(min-width:1400px'),
     ];
     const getBreakpointIndex = () => breakpointMatches.filter(a => a).length;
-    const SUPPRESSED_WARNINGS = ['trigger limits the visibility of the overlay to just mouse users.'];
+    const SUPPRESSED_WARNINGS = ['trigger limits the visibility of the overlay to just mouse users.', 'Each child in a list should have a unique'];
     const consoleError = console.error;
     console.error = function filterWarnings(msg, ...args) {
         if (!SUPPRESSED_WARNINGS.some((entry) => msg.includes(entry)) && !SUPPRESSED_WARNINGS.some((entry) => args.some((arg) => arg.includes != null && arg.includes(entry)))) {
@@ -262,16 +263,21 @@ function App() {
             alert("Error reading CSV");
         }
     }
-    function format_cell(value, index, row) {
+    function format_cell(value, index, row, whitespace) {
+        whitespace = whitespace ?? String.fromCharCode(160);
         if (value == undefined)
             return "";
         switch (index) {
             case header_lookup["ID"]:
-                return <div key={`id-${index}-${value}`} className="numeric">{value}</div>
+                return <div key={`id-${index}-${value}`} className="numeric">{value}</div>;
             case header_lookup["Count"]:
-                return (<Form.Control key={`count-${getID(row)}`} id={`count-${getID(row)}`} size="lg" style={{ "maxWidth": "100px", "padding": "20%" }} type="number"
-                    min="0" max={(["Commander", "Structure"].includes(row[header_lookup["type"]])) ? 1 : 3}
-                    value={value} onChange={(e) => { updateCount(getID(row), e.target.value) }} />);
+                return (<CustomCount
+                    count={value}
+                    updateCount={updateCount}
+                    name={getID(row)}
+                    max={(["Commander", "Structure"].includes(row[header_lookup["type"]])) ? 1 : 3}
+                    inverted={getBreakpointIndex() < 4}
+                />);
                 break;
             case header_lookup["name"]:
                 try {
@@ -284,7 +290,7 @@ function App() {
                             </Popover>
                             }
                         >
-                            <div key={`name-${index}-${value}`} style={{ height: "100%", display: "flex", alignItems: "center" }}>{value.replace(/\s/g, String.fromCharCode(160))}</div>
+                            <div key={`name-${index}-${value}`} style={{ height: "100%", display: "flex", alignItems: "center" }}>{value.replace(/\s/g, whitespace)}</div>
                         </OverlayTrigger>
                     )
                 } catch (e) {
@@ -595,25 +601,8 @@ function App() {
                         </tbody>
                     </Table>
                 </Tab>
-                <Tab title="Cards : Table View" eventKey="table">
-                    <Table striped bordered hover >
-                        <thead style={{ position: "sticky", top: "-1px" }}>
-                            <tr >
-                                {headers.map((value, index) => (<th key={index }>{value.replace(/\s/g, String.fromCharCode(160))}</th>))}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {filtered_csv_data.map((row_value, index) => (
-                                <tr key={`row-${getID(row_value)}\\:${index}`}>
-                                    {row_value.map((value, index2) => (
-                                        <td key={`row-${getID(row_value)}\\:${index}-col-${index2}`}>
-                                            {format_cell(value, index2, row_value)}
-                                        </td>))
-                                    }
-                                </tr>))
-                            }
-                        </tbody>
-                    </Table>
+                <Tab title="Cards : Table View" eventKey="table">  {/*style={{ overflowX: "auto", scrollBehavior: "smooth" }}>*/}
+                    <CardTableView filtered_csv_data={filtered_csv_data} getBreakpointIndex={getBreakpointIndex} headers={headers} header_lookup={header_lookup} format_cell={format_cell} getID={getID} />
                 </Tab>
             </Tabs>
         </div>
