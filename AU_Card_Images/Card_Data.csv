@@ -138,7 +138,7 @@ Count,ID,name,type,faction,mana cost,gold cost,power,health,effect,tag1
 0,127,Arena,Structure,Diablo,0,0,0,6,"Turn Start: If there is a defeated enemy unit in this lane, gain 1 <<!gold>>.",
 0,128,Tower,Structure,Diablo,0,0,0,6,Allied commanders that arrive in this lane get +1/+1.<br>Once per turn: Move <<!target>><b>allied commander in this lane</b> to <<!target>><b>adjacent lane</b>.,
 0,129,Altar,Structure,Grim,1,1,0,6,"Turn Start, discard <<!target>><b>nearby defeated allied unit</b>, exile 2 cards from discard: Draw 1.",
-0,130,Smugglers' Den,Structure,Grim,0,0,0,6,"Turn Start: You may discard 1 then exile 2 cards from discard to gain 1 .<br>Defeat: Pay X <<!gold>> to return X cards exiled by this card to hand, then discard the rest.<br>Once per turn: Defeat this.",
+0,130,Smugglers' Den,Structure,Grim,0,0,0,6,"Turn Start: You may discard 1 then exile 2 cards from discard to gain 1 <<!gold>>.<br>Defeat: Pay X <<!gold>> to return X cards exiled by this card to hand, then discard the rest.<br>Once per turn: Defeat this.",
 0,131,Dyna Grove,Structure,Myst,2,0,0,8,Retaliate 2<br>Turn Start: Gain <<!mana>>.,
 0,132,Shrine,Structure,Myst,0,0,0,6,"Once per turn, 1 <<!gold>>: Gain <<!mana>>.<br>Damaged: Reduce the cost of Shrine's abilities by 1 <<!gold>> next turn.",
 0,133,Royal Palace,Structure,Rula,1,1,0,7,"Supply <<!mana>> and <<!gold>> to this lane. <br>Once per turn, relinquish a structure: Supply <<!mana>> and <<!gold>> to adjacent lanes until end of turn.",
